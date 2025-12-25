@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://stock-dashboard.cluster-chg2ayuc8n7m.ap-south-1.rds.amazonaws.com:5432/stock_dashboard
+    username: postgres
+    password: postgres
+
+#  config:
+#    import:
+#      - "aws-secretsmanager:test/password?prefix=db."
+
+
+  jpa:
+    show-sql: true
