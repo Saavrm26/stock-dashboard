@@ -6,3 +6,7 @@ output "aurora_db_cluster_id" {
 output "aurora_db_secret_name" {
   value = module.aurora_db.cluster_master_password
 }
+
+output "bastion_sg_id" {
+  value = aws_security_group.db_bastion_access.id
+}
