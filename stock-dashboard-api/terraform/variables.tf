@@ -3,13 +3,11 @@ variable "vpc_name" {
   type        = string
 }
 
-
 variable "env" {
   description = "The environment of the VPC"
   type        = string
   default     = "dev"
 }
-
 
 variable "db_name" {
   description = "The name of the DB"
