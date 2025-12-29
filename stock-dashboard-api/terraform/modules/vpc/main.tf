@@ -26,4 +26,23 @@ module "vpc" {
     Terraform   = "true"
     Environment = var.env
   }
+
+  # Required for elastic load balancer to work - for Ingress and LoadBalancer service resources
+  public_subnet_tags = {
+    "kubernetes.io/role/elb" = 1
+    # adding here for consistency
+    Terraform   = "true"
+    Environment = var.env
+  }
+
+  private_subnet_tags = {
+    "kubernetes.io/role/internal-elb" = 1
+    Terraform   = "true"
+    Environment = var.env
+  }
+
+  database_subnet_tags = {
+    Terraform   = "true"
+    Environment = var.env
+  }
 }

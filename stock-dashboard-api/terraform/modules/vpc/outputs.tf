@@ -17,3 +17,7 @@ output "public_subnets_cidr_blocks" {
 output "database_subnet_group_name" {
   value = module.vpc.database_subnet_group_name
 }
+
+output "private_subnets" {
+  value = module.vpc.private_subnets
+}

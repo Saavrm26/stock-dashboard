@@ -1,23 +1,9 @@
-
-variable "env" {
-  description = "The environment of the VPC"
+variable "cluster_name" {
   type        = string
-  default     = "dev"
-}
-
-variable "name" {
-  description = "Name of the application"
-  type = string
 }
 
 variable "node_instance_types" {
-  description = "Instance types for the node group"
   type = list(string)
-}
-
-variable "use_spot_node_group" {
-  type = bool
-  description = "Use spot instances for the node group"
 }
 
 variable "min_size" {
@@ -35,3 +21,10 @@ variable "initial_desired_size" {
   type = number
 }
 
+variable "vpc_id" {
+  type = string
+}
+
+variable "private_subnets" {
+  type = list(string)
+}
