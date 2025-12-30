@@ -2,6 +2,18 @@ provider "aws" {
   region = "ap-south-1"
 }
 
+provider "helm" {
+  kubernetes = {
+    host                   = module.stock_dashboard_eks.cluster_endpoint
+    cluster_ca_certificate = base64decode(module.stock_dashboard_eks.cluster_certificate_authority_data)
+    exec = {
+      api_version = "client.authentication.k8s.io/v1beta1"
+      args        = ["eks", "get-token", "--cluster-name", module.stock_dashboard_eks.cluster_name]
+      command     = "aws"
+    }
+  }
+}
+
 module "stock_dashboard_vpc" {
   source = "./modules/vpc"
 
@@ -11,9 +23,10 @@ module "stock_dashboard_vpc" {
 
 module "stock_dashboard_db" {
   source = "./modules/db"
+  count  = var.create_db ? 1 : 0
 
-  db_name                     = "${var.name}_${var.env}"
-  cluster_name                = "${var.name}_${var.env}"
+  db_name                     = "${var.name}-${var.env}"
+  cluster_name                = "${var.name}-${var.env}"
   vpc_id                      = module.stock_dashboard_vpc.vpc_id
   private_subnets_cidr_blocks = module.stock_dashboard_vpc.private_subnets_cidr_blocks
   database_subnet_group_name  = module.stock_dashboard_vpc.database_subnet_group_name
@@ -22,7 +35,7 @@ module "stock_dashboard_db" {
 module "stock_dashboard_eks" {
   source = "./modules/eks"
 
-  cluster_name = "${var.name}_${var.env}"
+  cluster_name = "${var.name}-${var.env}"
   node_instance_types = var.node_instance_types
   min_size = var.min_size
   max_size = var.max_size

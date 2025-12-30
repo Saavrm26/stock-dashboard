@@ -35,3 +35,9 @@ variable "initial_desired_size" {
   type = number
 }
 
+variable "create_db" {
+  description = "Whether to create the database module"
+  type        = bool
+  default     = true
+}
+
