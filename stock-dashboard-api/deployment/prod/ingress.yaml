@@ -8,6 +8,7 @@ metadata:
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:524831447009:certificate/dc9c3601-068c-4406-b39f-9f1ac3c060ea
     alb.ingress.kubernetes.io/ssl-redirect: '443'
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    external-dns.alpha.kubernetes.io/ttl: "60"
 spec:
   ingressClassName: alb
   rules:
