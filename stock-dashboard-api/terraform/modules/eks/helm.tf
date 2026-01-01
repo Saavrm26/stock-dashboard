@@ -55,6 +55,10 @@ resource "helm_release" "aws_load_balancer_controller" {
     {
       name  = "vpcId"
       value = var.vpc_id
+    },
+    {
+      name = "backendSecurityGroup",
+      value = aws_security_group.aws_alb_shared_backend_sg.id
     }
   ]
 
