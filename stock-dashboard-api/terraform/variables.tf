@@ -10,6 +10,11 @@ variable "name" {
   type = string
 }
 
+variable "db_name" {
+  description = "Name of the RDS database"
+  type = string
+}
+
 variable "node_instance_types" {
   description = "Instance types for the node group"
   type = list(string)

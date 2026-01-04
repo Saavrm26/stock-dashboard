@@ -19,7 +19,7 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(module.stock_dashboard_eks.cluster_certificate_authority_data)
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
-    args        = ["eks", "get-token", "--cluster-name", module.stock_dashboard_eks.cluster_endpoint]
+    args        = ["eks", "get-token", "--cluster-name", module.stock_dashboard_eks.cluster_name]
     command     = "aws"
   }
 }
@@ -31,11 +31,12 @@ module "stock_dashboard_vpc" {
   env      = var.env
 }
 
+# DB can be created in parallel to EKS, since it's use is only in k8s
 module "stock_dashboard_db" {
   source = "./modules/db"
   count  = var.create_db ? 1 : 0
 
-  db_name                     = "${var.name}-${var.env}"
+  db_name                     = var.db_name
   cluster_name                = "${var.name}-${var.env}"
   vpc_id                      = module.stock_dashboard_vpc.vpc_id
   private_subnets_cidr_blocks = module.stock_dashboard_vpc.private_subnets_cidr_blocks

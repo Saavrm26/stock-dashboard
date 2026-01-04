@@ -1,7 +1,7 @@
 spring:
   datasource:
     # This doesn't actually exist
-    url: jdbc:postgresql://stock-dashboard.cluster-chg2ayuc8n7m.ap-south-1.rds.amazonaws.com:5432/stock_dashboard
+    url: jdbc:postgresql://${DB_URL}/${DB_NAME}
     username: postgres
     password: postgres
 

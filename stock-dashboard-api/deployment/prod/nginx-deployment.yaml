@@ -17,6 +17,17 @@ spec:
       containers:
       - name: nginx
         image: nginx:latest
+        env:
+          - name: DB_URL
+            valueFrom:
+              configMapKeyRef:
+                key: db_url
+                name: infra-config
+          - name: DB_USER
+            valueFrom:
+              configMapKeyRef:
+                key: db_user
+                name: infra-config
         ports:
         - containerPort: 80
         resources:
