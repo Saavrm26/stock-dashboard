@@ -4,6 +4,7 @@ output "cluster_url" {
 
 output "database_user" {
   value = try(module.stock_dashboard_db[0].database_user, null)
+  sensitive = true
 }
 
 output "database_name" {

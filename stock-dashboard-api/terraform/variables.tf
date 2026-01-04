@@ -41,3 +41,8 @@ variable "create_db" {
   default     = true
 }
 
+variable "create_k8s" {
+  description = "Whether to create the k8s module"
+  type        = bool
+  default     = true
+}
