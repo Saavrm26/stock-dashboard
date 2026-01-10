@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+labels:
+  - pairs:
+      env: local
+
+resources:
+  - ../base
+  - config-map.yaml
+
+patches:
+  - path: patch-deployment.yaml

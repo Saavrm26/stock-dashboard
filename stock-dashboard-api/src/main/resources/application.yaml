@@ -3,6 +3,8 @@ spring:
     name: stock-dashboard-api
   datasource:
     driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${DB_URL}
+    username: ${DB_USER}
 
   jpa:
     hibernate:

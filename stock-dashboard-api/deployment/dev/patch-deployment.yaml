@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stock-dashboard-api-deployment
+  labels:
+    app: stock-dashboard-api
+
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          image: ghcr.io/saavrm26/stock-dashboard/api:local
+          args:
+            - "--spring.profiles.active=local"
