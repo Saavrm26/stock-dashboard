@@ -4,10 +4,23 @@ spring:
     username: ${DB_USER}
     password: postgres
 
-#  config:
+  security:
+    oauth2:
+      client:
+        registration:
+          cognito:
+            client-secret: ${CLIENT_SECRET}
+            redirect-uri: http://localhost:8080/login/oauth2/code/cognito
+
+  #  config:
 #    import:
 #      - "aws-secretsmanager:test/password?prefix=db."
 
 
   jpa:
     show-sql: true
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    xyz.saarthakdevelopsstuff.stock_dashboard_api: DEBUG

@@ -14,6 +14,25 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
+  security:
+    oauth2:
+      client:
+        registration:
+          cognito:
+            client-id: 16ofjif7lj3if2d2ncfjgbk6k4
+            client-secret: "client secret"
+            scope:
+              - phone
+              - openid
+              - email
+            # Spring Security by default uses a redirect-uri in the format: {baseUrl}/login/oauth2/code/{registrationId}
+            # For example: http://localhost:8080/login/oauth2/code/cognito
+            # See more: https://docs.spring.io/spring-security/reference/servlet/oauth2/login/core.html#oauth2login-sample-redirect-uri
+            redirect-uri: https://d84l1y8p4kdic.cloudfront.net
+        provider:
+          cognito:
+            issuerUri: https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_0bo7lbVvf
+            user-name-attribute: username
   cloud:
     aws:
       secretsmanager:
