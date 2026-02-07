@@ -33,6 +33,9 @@ spring:
           cognito:
             issuerUri: https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_0bo7lbVvf
             user-name-attribute: username
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_0bo7lbVvf/.well-known/jwks.json
   cloud:
     aws:
       secretsmanager:
@@ -47,3 +50,8 @@ management:
     web:
       exposure:
         include: restart
+
+cognito:
+  domain: "https://ap-south-10bo7lbvvf.auth.ap-south-1.amazoncognito.com"
+  clientId: "16ofjif7lj3if2d2ncfjgbk6k4"
+  logoutRedirectUrl: "<logout uri>"

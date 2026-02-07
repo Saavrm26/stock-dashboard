@@ -24,3 +24,6 @@ logging:
   level:
     org.springframework.security: DEBUG
     xyz.saarthakdevelopsstuff.stock_dashboard_api: DEBUG
+
+cognito:
+  logoutRedirectUrl: http://localhost:8080
