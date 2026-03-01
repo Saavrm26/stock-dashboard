@@ -4,20 +4,28 @@ import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService
 import org.springframework.security.oauth2.core.oidc.user.OidcUser
 import org.springframework.stereotype.Service
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.UserRepository
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.User
 
 @Service
-class StockDashboardOAuth2UserService : OidcUserService() {
+class StockDashboardOAuth2UserService(
+    private val userRepository: UserRepository
+) : OidcUserService() {
 
     override fun loadUser(userRequest: OidcUserRequest?): OidcUser {
-        val user = super.loadUser(userRequest)
-        println(user)
-        val claims = user.claims
-        val email = claims["email"]
-        val userName = claims["username"]
-        val name = claims["name"]
+        val userDto = super.loadUser(userRequest)
+        println(userDto)
+        val claims = userDto.claims
+        val email = claims["email"] as String
+        val userName = claims["username"] as String
+        val fullName = claims["name"] as String
         // TODO: check if user exists in DB
         // if not, create a new user
-        return user
+        val user = userRepository.findById(userName)
+        if (user == null) {
+            userRepository.save(User(userName, email, fullName))
+        }
+        return userDto
     }
 
 }

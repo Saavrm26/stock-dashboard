@@ -7,8 +7,11 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
     database-platform: org.hibernate.dialect.H2Dialect
+
+  flyway:
+    enabled: true
 
   cloud:
     aws:
