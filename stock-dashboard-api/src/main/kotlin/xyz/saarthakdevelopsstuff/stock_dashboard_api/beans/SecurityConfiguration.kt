@@ -13,6 +13,8 @@ import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.savedrequest.NullRequestCache
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.controller.auth.CognitoLogoutHandler
 
+// don't need any custom scopes right now. Will just continue with default scopes
+
 @EnableWebSecurity
 @Configuration
 class SecurityConfiguration {
@@ -55,7 +57,9 @@ class SecurityConfiguration {
             authorizeHttpRequests {
                 authorize(anyRequest, authenticated)
             }
-            oauth2Login { }
+            oauth2Login {
+                userInfoEndpoint {  }
+            }
             logout {
                 logoutSuccessHandler = cognitoLogoutHandler
             }

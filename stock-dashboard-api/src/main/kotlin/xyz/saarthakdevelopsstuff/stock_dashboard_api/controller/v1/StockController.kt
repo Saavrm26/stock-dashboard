@@ -13,6 +13,7 @@ class StockController {
     fun getAllTickers() : List<String> {
         val context = SecurityContextHolder.getContext()
         val authentication = context.authentication
+        
         println(authentication)
         println(authentication.name)
         println(authentication.principal)
