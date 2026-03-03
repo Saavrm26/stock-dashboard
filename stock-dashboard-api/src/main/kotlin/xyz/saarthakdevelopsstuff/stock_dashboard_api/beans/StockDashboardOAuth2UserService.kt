@@ -19,8 +19,6 @@ class StockDashboardOAuth2UserService(
         val email = claims["email"] as String
         val userName = claims["username"] as String
         val fullName = claims["name"] as String
-        // TODO: check if user exists in DB
-        // if not, create a new user
         val user = userRepository.findById(userName)
         if (user == null) {
             userRepository.save(User(userName, email, fullName))
