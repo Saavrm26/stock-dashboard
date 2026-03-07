@@ -7,5 +7,5 @@ stocks_service = StocksService()
 
 
 @router.get("/search")
-def search_stocks():
-    return stocks_service.search()
+def search_stocks(query: str):
+    return stocks_service.search(query)

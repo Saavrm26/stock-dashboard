@@ -25,4 +25,9 @@ class StockController(
         val ticker = stockServiceV1.addTicker(createTickerRequest)
         return ResponseEntity<Ticker>(ticker, HttpStatus.CREATED)
     }
+
+    @GetMapping("/search")
+    fun searchTicker(@RequestParam query: String): ResponseEntity<Void> {
+        return ResponseEntity<Void>(HttpStatus.OK)
+    }
 }
