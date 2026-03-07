@@ -11,8 +11,12 @@ class StockServiceV1(
     private val tickerRepository: TickerRepository,
     private val tickerMapper: TickerMapper
 ) {
-    fun addTicker(createTickerRequest: CreateTickerRequest): Ticker {
+     fun addTicker(createTickerRequest: CreateTickerRequest): Ticker {
         val ticker = tickerMapper.createTickerRequestToTicker(createTickerRequest)
         return tickerRepository.save(ticker)
+    }
+
+    fun getAllTickers(): List<Ticker> {
+        return tickerRepository.findAll()
     }
 }

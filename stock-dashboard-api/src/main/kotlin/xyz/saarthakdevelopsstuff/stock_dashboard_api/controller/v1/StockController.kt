@@ -8,21 +8,16 @@ import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.Ticker
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.CreateTickerRequest
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.service.StockServiceV1
 
+// This would a admin only controller
 @RestController
 @RequestMapping("/api/v1/stocks")
 class StockController(
     private val stockServiceV1: StockServiceV1
 ) {
     @GetMapping
-    fun getAllTickers(): List<String> {
-        val context = SecurityContextHolder.getContext()
-        val authentication = context.authentication
-
-        println(authentication)
-        println(authentication.name)
-        println(authentication.principal)
-        println(authentication.authorities)
-        return listOf("AAPL", "MSFT", "GOOGL", "AMZN", "TSLA")
+    fun getAllTickers(): ResponseEntity<List<Ticker>> {
+        val tickers = stockServiceV1.getAllTickers()
+        return ResponseEntity<List<Ticker>>(tickers, HttpStatus.OK)
     }
 
     @PostMapping
