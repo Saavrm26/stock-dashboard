@@ -1,3 +1,28 @@
+# Stock Dashboard
+
+## Components
+
+### stock-dashboard-api
+
+This acts as both a Backend for Frontend as well as a resource server.
+This primarily handles all the core activities like authn, authz.
+
+### stock-dashboard-api-sidecar
+
+This is a python sidecar. It's primary function is to provide functionalities that
+are hard to make in java. Examples:
+
+1. Yahoo finance package to search stocks
+2. Langgraph to create agents
+
+The sidecar wouldn't be exposed to the internet
+
+### stock-dashboard-frontend
+
+TODO
+
+## Deployment
+
 Deploy the backend first
 
 ```sh
@@ -5,7 +30,7 @@ cd stock-dashboard-api/terraform
 terraform apply
 ```
 
-Set k8s context from eks. Example: 
+Set k8s context from eks. Example:
 
 ```sh
 aws eks update-kubeconfig --region ap-south-1 --name stock-dashboard-dev
@@ -20,6 +45,14 @@ kubectl apply -f nginx-service.yaml
 kubectl apply -f ingress.yaml
 ```
 
-TODO:  
-1. Migrate to helm
-2. Actually make the backend :smile:
+## Features (Planned and Active)
+
+### Stocks core (WIP)
+
+1. Search and add stocks (currently working)
+2. Stock history (planned, but haven't started)
+3. Use various knowledge bases to know more about the stocks
+
+### Chat with stocks(Planned)
+
+1. Use knowledge sources to chat with a stock, search the current news
