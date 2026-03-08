@@ -6,6 +6,7 @@ plugins {
 	id 'org.jetbrains.kotlin.plugin.jpa' version '2.2.21'
     id 'com.google.devtools.ksp' version '2.3.4'
     id "org.jetbrains.kotlin.kapt" version "2.3.10"
+    id "com.google.protobuf" version "0.9.6"
 }
 
 group = 'xyz.saarthakdevelopsstuff'
@@ -45,7 +46,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'org.mapstruct:mapstruct:1.7.0.Beta1'
     kapt 'org.mapstruct:mapstruct-processor:1.7.0.Beta1'
-
+    implementation 'com.google.protobuf:protobuf-java:4.33.5'
     runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'com.h2database:h2'
@@ -57,6 +58,21 @@ kotlin {
 	compilerOptions {
 		freeCompilerArgs.addAll '-Xjsr305=strict', '-Xannotation-default-target=param-property'
 	}
+}
+
+sourceSets {
+    main {
+        proto {
+            srcDir "../common/proto/v1"
+        }
+    }
+    java {}
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:4.33.5"
+    }
 }
 
 allOpen {
