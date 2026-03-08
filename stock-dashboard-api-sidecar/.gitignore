@@ -214,3 +214,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+# Generated proto files
+app/models/generated/*
+!app/models/generated/.gitkeep

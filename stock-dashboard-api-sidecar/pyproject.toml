@@ -6,6 +6,11 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.115.0",
+    "protobuf>=7.34.0",
     "uvicorn[standard]>=0.32.0",
     "yfinance>=1.2.0",
 ]
+
+
+[tool.uv.scripts]
+compile-protos = "protoc --proto_path=../common/proto/v1 --python_out=app/models/generated ../common/proto/v1/*.proto"
