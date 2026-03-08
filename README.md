@@ -53,6 +53,14 @@ kubectl apply -f ingress.yaml
 2. Stock history (planned, but haven't started)
 3. Use various knowledge bases to know more about the stocks
 
+#### TODOs
+
+1. ~~side car api~~
+2. integration with main api
+3. Making a frontend
+4. Sidecar Dockerfile
+5. Deployment
+
 ### Chat with stocks(Planned)
 
 1. Use knowledge sources to chat with a stock, search the current news
