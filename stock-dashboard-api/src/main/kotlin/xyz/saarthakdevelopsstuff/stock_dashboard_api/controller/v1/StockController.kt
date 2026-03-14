@@ -1,9 +1,10 @@
 package xyz.saarthakdevelopsstuff.stock_dashboard_api.controller.v1
 
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
+import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.TickerDetailsOuterClass.TickerDetails
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.Ticker
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.CreateTickerRequest
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.service.StockServiceV1
@@ -26,8 +27,9 @@ class StockController(
         return ResponseEntity<Ticker>(ticker, HttpStatus.CREATED)
     }
 
-    @GetMapping("/search")
-    fun searchTicker(@RequestParam query: String): ResponseEntity<Void> {
-        return ResponseEntity<Void>(HttpStatus.OK)
+    @GetMapping("/search", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun searchTicker(@RequestParam query: String): ResponseEntity<TickerDetails> {
+        val tickerDetails = stockServiceV1.searchTicker(query)
+        return ResponseEntity<TickerDetails>(tickerDetails, HttpStatus.OK)
     }
 }

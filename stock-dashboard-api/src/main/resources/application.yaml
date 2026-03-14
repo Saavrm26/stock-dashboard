@@ -13,7 +13,6 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-
   flyway:
     enabled: true
 
@@ -46,6 +45,10 @@ spring:
         reload:
           strategy: restart_context
 
+  threads:
+    virtual:
+      enabled: true
+
 management:
   endpoint:
     restart:
@@ -59,3 +62,7 @@ cognito:
   domain: "https://ap-south-10bo7lbvvf.auth.ap-south-1.amazoncognito.com"
   clientId: "16ofjif7lj3if2d2ncfjgbk6k4"
   logoutRedirectUrl: "<logout uri>"
+
+clients:
+  stock:
+    url: "http://localhost:8081"

@@ -28,30 +28,34 @@ dependencyManagement {
 		mavenBom "org.springframework.boot:spring-boot-dependencies:3.3.5"
 		mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2023.0.3'
 		mavenBom 'io.awspring.cloud:spring-cloud-aws-dependencies:3.2.1'
+        mavenBom 'com.google.protobuf:protobuf-bom:4.33.5'
 	}
 }
 
 dependencies {
+    // deps from BOMs
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.cloud:spring-cloud-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
 	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
-    implementation 'org.flywaydb:flyway-core:11.20.3'
-    runtimeOnly 'org.flywaydb:flyway-database-postgresql:11.20.3'
 	implementation 'io.awspring.cloud:spring-cloud-aws-starter-secrets-manager'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation "org.springframework.boot:spring-boot-starter-security"
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
-    implementation 'org.mapstruct:mapstruct:1.7.0.Beta1'
-    kapt 'org.mapstruct:mapstruct-processor:1.7.0.Beta1'
-    implementation 'com.google.protobuf:protobuf-java:4.33.5'
+    implementation 'com.google.protobuf:protobuf-java'
+    implementation 'com.google.protobuf:protobuf-java-util'
     runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'com.h2database:h2'
 	testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // Deps not from BOMs
+    implementation 'org.flywaydb:flyway-core:11.20.3'
+    implementation 'org.mapstruct:mapstruct:1.7.0.Beta1'
+    kapt 'org.mapstruct:mapstruct-processor:1.7.0.Beta1'
+    runtimeOnly 'org.flywaydb:flyway-database-postgresql:11.20.3'
 }
 
 kotlin {
