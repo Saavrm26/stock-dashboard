@@ -12,7 +12,7 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-    - host: playground.saarthakdevelopsstuff.xyz
+    - host: stocks.api.saarthakdevelopsstuff.xyz
       http:
         paths:
           - path: /

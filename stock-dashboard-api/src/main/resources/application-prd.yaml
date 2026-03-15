@@ -11,3 +11,22 @@ spring:
 
   jpa:
     show-sql: false
+
+  security:
+    oauth2:
+      client:
+        registration:
+          cognito:
+            client-id: 2r5efhos59gv3fs6hk59g604c3
+            redirect-uri: https://stocks.api.saarthakdevelopsstuff.xyz/login/oauth2/code/cognito
+        provider:
+          cognito:
+            issuerUri: https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_KVzxBoBd9
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_KVzxBoBd9/.well-known/jwks.json
+
+cognito:
+  domain: https://ap-south-1kvzxbobd9.auth.ap-south-1.amazoncognito.com
+  client-id: 2r5efhos59gv3fs6hk59g604c3
+  logoutRedirectUrl: https://stocks.api.saarthakdevelopsstuff.xyz
