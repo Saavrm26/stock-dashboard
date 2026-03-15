@@ -56,8 +56,8 @@ kubectl apply -f ingress.yaml
 #### TODOs
 
 1. ~~side car api~~
-2. integration with main api
-3. Making a frontend
+2. ~~integration with main api~~
+3. Making the frontend
 4. Sidecar Dockerfile
 5. Deployment
 

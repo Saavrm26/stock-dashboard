@@ -11,6 +11,3 @@ dependencies = [
     "yfinance>=1.2.0",
 ]
 
-
-[tool.uv.scripts]
-compile-protos = "protoc --proto_path=../common/proto/v1 --python_out=app/models/generated ../common/proto/v1/*.proto"
