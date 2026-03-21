@@ -22,7 +22,7 @@ spring:
         registration:
           cognito:
             client-id: 16ofjif7lj3if2d2ncfjgbk6k4
-            client-secret: "client secret"
+#            client-secret: "client secret"
             scope:
               - phone
               - openid

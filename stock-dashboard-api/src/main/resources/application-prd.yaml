@@ -4,9 +4,10 @@ spring:
     url: jdbc:postgresql://${DB_URL}
     username: ${DB_USER}
 
-#  config:
-#    import:
+  config:
+    import:
 #      - "aws-secretsmanager:test/password?prefix=db."
+      - aws-parameterstore:/stock-dashboard/prd/cognito
 
 
   jpa:
@@ -17,6 +18,7 @@ spring:
       client:
         registration:
           cognito:
+            client-secret: "${client-secret}"
             client-id: 2r5efhos59gv3fs6hk59g604c3
             redirect-uri: https://stocks.api.saarthakdevelopsstuff.xyz/login/oauth2/code/cognito
         provider:

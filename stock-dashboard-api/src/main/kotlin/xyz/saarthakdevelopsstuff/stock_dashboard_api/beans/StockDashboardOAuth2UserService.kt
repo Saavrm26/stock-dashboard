@@ -14,7 +14,6 @@ class StockDashboardOAuth2UserService(
 
     override fun loadUser(userRequest: OidcUserRequest?): OidcUser {
         val userDto = super.loadUser(userRequest)
-        println(userDto)
         val claims = userDto.claims
         val email = claims["email"] as String
         val userName = claims["username"] as String

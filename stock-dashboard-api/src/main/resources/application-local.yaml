@@ -4,12 +4,17 @@ spring:
     username: ${DB_USER}
     password: postgres
 
+  config:
+    import:
+      # This has secrets and other configurations
+      - aws-parameterstore:/stock-dashboard/local/cognito
+
   security:
     oauth2:
       client:
         registration:
           cognito:
-            client-secret: ${CLIENT_SECRET}
+            client-secret: "${client-secret}"
             redirect-uri: http://localhost:8080/login/oauth2/code/cognito
 
   jpa:
@@ -17,7 +22,13 @@ spring:
 
 logging:
   level:
-    org.springframework.security: DEBUG
+    org:
+      springframework:
+        security: DEBUG
+        boot:
+          context:
+            config: DEBUG
+            properties: DEBUG
     xyz.saarthakdevelopsstuff.stock_dashboard_api: DEBUG
 
 cognito:
