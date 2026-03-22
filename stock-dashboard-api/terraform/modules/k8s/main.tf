@@ -9,5 +9,6 @@ resource "kubernetes_config_map_v1" "infra_config" {
   data = {
     db_url  = var.db_url
     db_user = var.db_user
+    aurora_db_secret_name = var.aurora_db_secret_name
   }
 }

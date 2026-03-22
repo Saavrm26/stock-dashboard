@@ -5,3 +5,7 @@ variable "db_url" {
 variable "db_user" {
   type = string
 }
+
+variable "aurora_db_secret_name" {
+  type = string
+}

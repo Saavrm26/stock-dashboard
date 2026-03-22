@@ -4,7 +4,8 @@ output "aurora_db_cluster_id" {
 }
 
 output "aurora_db_secret_name" {
-  value = module.aurora_db.cluster_master_password
+
+  value = element(split(":", module.aurora_db.cluster_master_user_secret[0].secret_arn), -1)
 }
 
 output "bastion_sg_id" {

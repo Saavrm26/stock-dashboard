@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stock-dashboard-api-deployment
+  labels:
+    app: stock-dashboard-api
+
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          image: ghcr.io/saavrm26/stock-dashboard/api:latest
+          args:
+            - "--spring.profiles.active=prd"
+          env:
+            - name: AURORA_DB_SECRET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: aurora_db_secret_name
+                  name: infra-config
+            - name: DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: db_url
+                  name: infra-config
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  key: db_user
+                  name: infra-config

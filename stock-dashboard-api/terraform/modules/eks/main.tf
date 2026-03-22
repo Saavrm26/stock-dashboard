@@ -99,6 +99,7 @@ module "spot_eks_managed_node_group" {
   cluster_primary_security_group_id = module.eks.cluster_primary_security_group_id
   cluster_service_cidr              = module.eks.cluster_service_cidr
   vpc_security_group_ids            = [module.eks.node_security_group_id, aws_security_group.aws_allow_traffic_from_alb.id]
+  kubernetes_version = "1.34"
 
   min_size        = var.min_size
   max_size        = var.max_size
