@@ -12,6 +12,7 @@ SERVICE_DIR="${SCRIPT_DIR}"
 COMMON_DIR="${COMMON_DIR:-${REPO_ROOT}/common}"
 DOCKERFILE="${DOCKERFILE:-${SERVICE_DIR}/Dockerfile}"
 DOCKER=()
+TARGET_USER="${SUDO_USER:-${USER:-}}"
 
 log() {
   printf '[stock-dashboard-api] %s\n' "$*"
@@ -53,6 +54,14 @@ require_cmd() {
   command -v "$1" >/dev/null 2>&1 || die "Missing required command: $1"
 }
 
+configure_docker_group() {
+  [[ -n "${TARGET_USER}" ]] || return 0
+  command -v sudo >/dev/null 2>&1 || return 0
+  getent group docker >/dev/null 2>&1 || sudo groupadd docker
+  sudo usermod -aG docker "${TARGET_USER}"
+  log "Added ${TARGET_USER} to the docker group. Future shells can use docker without sudo after 'newgrp docker' or a new login."
+}
+
 pick_docker_cmd() {
   if docker info >/dev/null 2>&1; then
     DOCKER=(docker)
@@ -61,6 +70,7 @@ pick_docker_cmd() {
 
   if command -v sudo >/dev/null 2>&1; then
     if sudo docker info >/dev/null 2>&1; then
+      configure_docker_group
       DOCKER=(sudo docker)
       return
     fi
@@ -107,6 +117,12 @@ install_docker_on_debian() {
   "${sudo_cmd[@]}" apt-get update
   "${sudo_cmd[@]}" apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
   "${sudo_cmd[@]}" systemctl enable --now docker
+
+  if [[ -n "${TARGET_USER}" ]]; then
+    getent group docker >/dev/null 2>&1 || "${sudo_cmd[@]}" groupadd docker
+    "${sudo_cmd[@]}" usermod -aG docker "${TARGET_USER}"
+    log "Added ${TARGET_USER} to the docker group. Start a new shell or run 'newgrp docker' to use docker without sudo."
+  fi
 }
 
 ensure_base_image() {
