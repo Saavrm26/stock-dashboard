@@ -18,3 +18,12 @@ output "external_dns_role_arn" {
   value       = aws_iam_role.external_dns.arn
 }
 
+output "eks_oidc_provider" {
+  description = "EKS OIDC provider"
+  value = module.eks.oidc_provider
+}
+
+output "eks_oidc_provider_arn" {
+  description = "EKS OIDC provider ARN"
+  value = module.eks.oidc_provider_arn
+}

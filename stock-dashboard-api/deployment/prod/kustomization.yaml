@@ -7,7 +7,7 @@ labels:
 
 resources:
   - ../base
-  - ingress.yaml
+#  - ingress.yaml
 
 patches:
   - path: patch-deployment.yaml

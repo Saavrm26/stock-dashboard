@@ -16,6 +16,7 @@ spring:
   flyway:
     enabled: true
 
+
   security:
     oauth2:
       client:
@@ -41,6 +42,8 @@ spring:
           jwk-set-uri: https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_0bo7lbVvf/.well-known/jwks.json
   cloud:
     aws:
+      region:
+        static: ap-south-1
       secretsmanager:
         reload:
           strategy: restart_context

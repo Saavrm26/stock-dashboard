@@ -40,6 +40,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
 	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+	implementation 'io.awspring.cloud:spring-cloud-aws-starter'
+	implementation 'software.amazon.awssdk:sts'
 	implementation 'io.awspring.cloud:spring-cloud-aws-starter-secrets-manager'
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-parameter-store'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'

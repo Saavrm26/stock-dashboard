@@ -8,6 +8,7 @@ metadata:
 spec:
   template:
     spec:
+      serviceAccountName: app-sa
       containers:
         - name: app
           image: ghcr.io/saavrm26/stock-dashboard/api:latest

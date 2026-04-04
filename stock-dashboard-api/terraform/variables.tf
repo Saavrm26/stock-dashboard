@@ -51,3 +51,9 @@ variable "create_k8s" {
   type        = bool
   default     = true
 }
+
+variable "custom_app_policy_arn" {
+  description = "Policy of a custom policy that you want to attach"
+  type = string
+  default = null
+}

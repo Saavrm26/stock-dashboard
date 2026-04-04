@@ -3,9 +3,9 @@ output "aurora_db_cluster_id" {
   description = "The public IP address of the EC2 instance"
 }
 
-output "aurora_db_secret_name" {
-
-  value = element(split(":", module.aurora_db.cluster_master_user_secret[0].secret_arn), -1)
+output "aurora_db_secret_arn" {
+  value       = module.aurora_db.cluster_master_user_secret[0].secret_arn
+  description = "Secrets Manager ARN for the Aurora cluster master user"
 }
 
 output "bastion_sg_id" {
