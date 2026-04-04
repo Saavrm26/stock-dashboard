@@ -21,7 +21,7 @@ resource "kubernetes_service_account_v1" "app_sa" {
   metadata {
     name = var.app_sa_name
     annotations = {
-      "eks.eks.amazonaws.com/role-arn": aws_iam_role.app_role.arn
+      "eks.amazonaws.com/role-arn": aws_iam_role.app_role.arn
     }
   }
 }

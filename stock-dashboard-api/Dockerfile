@@ -25,5 +25,5 @@ WORKDIR /app
 
 COPY --from=build /app/build/libs/*.jar /app/stock-dashboard-api.jar
 
-ENTRYPOINT ["java", "-jar", "stock-dashboard-api.jar"]
-CMD ["-Dspring.profiles.active=prd"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=prd", "-jar", "stock-dashboard-api.jar"]
+
