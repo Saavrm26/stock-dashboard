@@ -58,7 +58,7 @@ module "stock_dashboard_eks" {
 module "stock_dashboard_k8s" {
   source                = "./modules/k8s"
   count                 = var.create_k8s ? 1 : 0
-  db_url                = "${module.stock_dashboard_db[0].cluster_url}/${module.stock_dashboard_db[0].database_name}"
+  db_url                = "${module.stock_dashboard_db[0].cluster_url}:${module.stock_dashboard_db[0].aurora_db_port}/${module.stock_dashboard_db[0].database_name}"
   db_user               = module.stock_dashboard_db[0].database_user
   aurora_db_secret_arn = module.stock_dashboard_db[0].aurora_db_secret_arn
   # just to be safe, theoretically it is not required as the k8s provider depends on eks init

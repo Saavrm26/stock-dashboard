@@ -8,12 +8,17 @@ output "aurora_db_secret_arn" {
   description = "Secrets Manager ARN for the Aurora cluster master user"
 }
 
+
 output "bastion_sg_id" {
   value = aws_security_group.db_bastion_access.id
 }
 
 output "cluster_url" {
   value = module.aurora_db.cluster_endpoint
+}
+
+output "aurora_db_port" {
+  value = module.aurora_db.cluster_port
 }
 
 output "database_user" {

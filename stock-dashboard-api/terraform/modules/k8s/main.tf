@@ -1,5 +1,5 @@
-locals {
-  aurora_db_secret_name = element(split(":", var.aurora_db_secret_arn), -1)
+data "aws_secretsmanager_secret" "aurora_db_secret" {
+  arn = var.aurora_db_secret_arn
 }
 
 resource "kubernetes_config_map_v1" "infra_config" {
@@ -13,7 +13,7 @@ resource "kubernetes_config_map_v1" "infra_config" {
   data = {
     db_url  = var.db_url
     db_user = var.db_user
-    aurora_db_secret_name = local.aurora_db_secret_name
+    aurora_db_secret_name = data.aws_secretsmanager_secret.aurora_db_secret.name
   }
 }
 

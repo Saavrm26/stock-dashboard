@@ -6,7 +6,7 @@
 6. ~~Attach VPC CNI plugin with the IAM role created above~~
 7. ~~Create node group~~
 8. ~~Create IRSA for AWS load balancer controller~~
-9. Create IRSA for main pods service account
+9. ~~Create IRSA for main pods service account~~
 10. ~~Create IRSA for external dns~~
 10. Create IRSA for cluster autoscaler service account
 11. ~~tag the subnets~~
