@@ -33,16 +33,14 @@ terraform apply
 Set k8s context from eks. Example:
 
 ```sh
-aws eks update-kubeconfig --region ap-south-1 --name stock-dashboard-dev
+aws eks update-kubeconfig --region ap-south-1 --name stock-dashboard-prd
 ```
 
 Then deploy the k8s stuff. Change the certificate in the ingress
 
 ```sh
-cd stock-dashboard-api/deployment/prod
-kubectl apply -f nginx-deployment.yaml
-kubectl apply -f nginx-service.yaml
-kubectl apply -f ingress.yaml
+cd stock-dashboard-api/deployment
+kubectl apply -k prod
 ```
 
 ## Features (Planned and Active)
@@ -58,8 +56,8 @@ kubectl apply -f ingress.yaml
 1. ~~side car api~~
 2. ~~integration with main api~~
 3. Making the frontend
-4. Sidecar Dockerfile
-5. Deployment
+4. ~~Sidecar Dockerfile~~
+5. ~~Deployment~~
 
 ### Chat with stocks(Planned)
 
