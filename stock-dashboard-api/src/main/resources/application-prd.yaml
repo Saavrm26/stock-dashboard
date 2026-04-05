@@ -6,7 +6,7 @@ spring:
 
   datasource:
     # This is wrong, currently. we will also need global pem file
-    url: jdbc:postgresql://${DB_URL}
+    url: "jdbc:postgresql://${DB_URL}?sslmode=verify-full&sslrootcert=/etc/aurora-cacrts/global-bundle.pem"
     username: ${DB_USER}
     password: "${password}"
 

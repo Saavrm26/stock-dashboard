@@ -11,3 +11,8 @@ resources:
 
 patches:
   - path: patch-deployment.yaml
+
+configMapGenerator:
+  - name: aurora-cacrts
+    files:
+      - ./global-bundle.pem
