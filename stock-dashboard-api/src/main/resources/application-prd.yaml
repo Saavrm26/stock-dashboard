@@ -31,4 +31,5 @@ spring:
 cognito:
   domain: https://ap-south-1kvzxbobd9.auth.ap-south-1.amazoncognito.com
   client-id: 2r5efhos59gv3fs6hk59g604c3
-  logoutRedirectUrl: https://stocks.api.saarthakdevelopsstuff.xyz
+  logoutRedirectUrl: https://stocks.saarthakdevelopsstuff.xyz
+  defaultSuccessUrl: https://stocks.saarthakdevelopsstuff.xyz

@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.savedrequest.NullRequestCache
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.properties.CognitoConfigurationProperties
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.controller.auth.CognitoLogoutHandler
 
 // don't need any custom scopes right now. Will just continue with default scopes
@@ -45,9 +46,9 @@ class SecurityConfiguration {
     @Order(2)
     @Bean
     fun appSecurityFilterChain(
-        httpSecurity: HttpSecurity, cognitoLogoutHandler: CognitoLogoutHandler
+        httpSecurity: HttpSecurity, cognitoLogoutHandler: CognitoLogoutHandler,
+        cognitoConfigurationProperties: CognitoConfigurationProperties
     ): SecurityFilterChain {
-        // TODO: add a logout endpoint
         val nullRequestCache = NullRequestCache()
         httpSecurity {
             securityMatcher("/**")
@@ -59,6 +60,7 @@ class SecurityConfiguration {
             }
             oauth2Login {
                 userInfoEndpoint {  }
+                defaultSuccessUrl(cognitoConfigurationProperties.defaultSuccessUrl, true)
             }
             logout {
                 logoutSuccessHandler = cognitoLogoutHandler

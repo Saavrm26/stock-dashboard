@@ -52,6 +52,18 @@ spring:
     virtual:
       enabled: true
 
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        secure: true
+        # same-site: strict
+
+  forward-headers-strategy: NATIVE
+
+
+
 management:
   endpoint:
     restart:

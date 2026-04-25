@@ -32,4 +32,5 @@ logging:
     xyz.saarthakdevelopsstuff.stock_dashboard_api: DEBUG
 
 cognito:
-  logoutRedirectUrl: http://localhost:8080
+  defaultSuccessUrl: http://localhost:3000
+  logoutRedirectUrl: http://localhost:3000
