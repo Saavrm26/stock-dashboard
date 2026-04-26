@@ -24,7 +24,7 @@ jobs:
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.repository_owner }}
+          username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: docker/build-push-action@v6
@@ -34,6 +34,6 @@ jobs:
           build-contexts: common=common
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/stock-dashboard/api:latest
+          tags: ghcr.io/saavrm26/stock-dashboard/api:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
