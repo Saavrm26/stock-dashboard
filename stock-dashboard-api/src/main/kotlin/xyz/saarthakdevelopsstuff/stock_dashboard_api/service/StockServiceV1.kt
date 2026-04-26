@@ -23,7 +23,7 @@ class StockServiceV1(
         return tickerRepository.findAll()
     }
 
-    fun searchTicker(ticker: String): TickerDetails? {
+    fun getTickerDetails(ticker: String): TickerDetails? {
         return stockClient.getTickerDetails(ticker)
     }
 }

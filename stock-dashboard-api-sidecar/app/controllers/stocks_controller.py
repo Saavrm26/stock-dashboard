@@ -7,7 +7,7 @@ router = APIRouter(prefix="/api/v1/stocks", tags=["stocks"])
 stocks_service = StocksService()
 
 
-@router.get("/search")
+@router.get("/ticker-details")
 def search_stocks(query: str):
-    details = stocks_service.search(query)
+    details = stocks_service.get_ticker_details(query)
     return MessageToDict(details)

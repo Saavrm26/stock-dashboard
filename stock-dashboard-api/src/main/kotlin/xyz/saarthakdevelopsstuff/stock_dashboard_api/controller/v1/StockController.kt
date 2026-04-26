@@ -27,9 +27,9 @@ class StockController(
         return ResponseEntity<Ticker>(ticker, HttpStatus.CREATED)
     }
 
-    @GetMapping("/search", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun searchTicker(@RequestParam query: String): ResponseEntity<TickerDetails> {
-        val tickerDetails = stockServiceV1.searchTicker(query)
+    @GetMapping("/ticker-details", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getTickerDetails(@RequestParam query: String): ResponseEntity<TickerDetails> {
+        val tickerDetails = stockServiceV1.getTickerDetails(query)
         return ResponseEntity<TickerDetails>(tickerDetails, HttpStatus.OK)
     }
 }

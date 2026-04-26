@@ -14,7 +14,7 @@ class StockClient(stockClientProperties: StockClientProperties) {
 
     fun getTickerDetails(ticker: String): TickerDetails? {
         return restClient.get().uri {
-            it.path("/api/v1/stocks/search").queryParam("query", ticker).build()
+            it.path("/api/v1/stocks/ticker-details").queryParam("query", ticker).build()
         }.retrieve().onStatus({ it.is4xxClientError }) { req, res ->
             throw RuntimeException("Remote service returned ${res.statusCode}")
         }.body<TickerDetails>()
