@@ -187,6 +187,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@bufbuild/protobuf@npm:^2.0.0, @bufbuild/protobuf@npm:^2.10.2":
+  version: 2.12.0
+  resolution: "@bufbuild/protobuf@npm:2.12.0"
+  checksum: 10c0/28959e371fd2e7c8d67d52af9e3c8f8e6770e2e116dcc5508f469ca736afa6905e216bc76183835898a5f3deb8aa2e7db47d4a0e706fba76115e9a1996893191
+  languageName: node
+  linkType: hard
+
 "@emnapi/core@npm:^1.4.3, @emnapi/core@npm:^1.8.1":
   version: 1.9.2
   resolution: "@emnapi/core@npm:1.9.2"
@@ -1538,6 +1545,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"case-anything@npm:^2.1.13":
+  version: 2.1.13
+  resolution: "case-anything@npm:2.1.13"
+  checksum: 10c0/b02ffa51d7d58b9a32df7b40973836e16afad131eae7d343e64cb3ca7be57a936bf3d6c9d57a7aa242cf2f545d9a33990b755e93bcac2517761d77773a4a6a30
+  languageName: node
+  linkType: hard
+
 "chalk@npm:^4.0.0":
   version: 4.1.2
   resolution: "chalk@npm:4.1.2"
@@ -1693,6 +1707,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"detect-libc@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "detect-libc@npm:1.0.3"
+  bin:
+    detect-libc: ./bin/detect-libc.js
+  checksum: 10c0/4da0deae9f69e13bc37a0902d78bf7169480004b1fed3c19722d56cff578d16f0e11633b7fbf5fb6249181236c72e90024cbd68f0b9558ae06e281f47326d50d
+  languageName: node
+  linkType: hard
+
 "detect-libc@npm:^2.0.3, detect-libc@npm:^2.1.2":
   version: 2.1.2
   resolution: "detect-libc@npm:2.1.2"
@@ -1706,6 +1729,15 @@ __metadata:
   dependencies:
     esutils: "npm:^2.0.2"
   checksum: 10c0/b6416aaff1f380bf56c3b552f31fdf7a69b45689368deca72d28636f41c16bb28ec3ebc40ace97db4c1afc0ceeb8120e8492fe0046841c94c2933b2e30a7d5ac
+  languageName: node
+  linkType: hard
+
+"dprint-node@npm:^1.0.8":
+  version: 1.0.8
+  resolution: "dprint-node@npm:1.0.8"
+  dependencies:
+    detect-libc: "npm:^1.0.3"
+  checksum: 10c0/39c1f8511833226cde773129afc5862dfd05babe062375e6b1f5824e221a5743a4d9c48626f32f7c2080113566270fe80521a50acb9029a20a2e80a3cd5e4106
   languageName: node
   linkType: hard
 
@@ -3904,6 +3936,7 @@ __metadata:
     react: "npm:19.2.4"
     react-dom: "npm:19.2.4"
     tailwindcss: "npm:^4"
+    ts-proto: "npm:^2"
     typescript: "npm:^5"
   languageName: unknown
   linkType: soft
@@ -4083,6 +4116,38 @@ __metadata:
   peerDependencies:
     typescript: ">=4.8.4"
   checksum: 10c0/767849383c114e7f1971fa976b20e73ac28fd0c70d8d65c0004790bf4d8f89888c7e4cf6d5949f9c1beae9bc3c64835bef77bbe27fddf45a3c7b60cebcf85c8c
+  languageName: node
+  linkType: hard
+
+"ts-poet@npm:^6.12.0":
+  version: 6.12.0
+  resolution: "ts-poet@npm:6.12.0"
+  dependencies:
+    dprint-node: "npm:^1.0.8"
+  checksum: 10c0/605ac770055259b618ba657b88995f7851d8a6106d9c335e71c8442be51a9b8a87c501aa7ab4babb43700a32ff47dc1cd877f78892c15166ded87c311c878735
+  languageName: node
+  linkType: hard
+
+"ts-proto-descriptors@npm:2.1.0":
+  version: 2.1.0
+  resolution: "ts-proto-descriptors@npm:2.1.0"
+  dependencies:
+    "@bufbuild/protobuf": "npm:^2.0.0"
+  checksum: 10c0/5695def6c31b7f3f8561876361a2db9f1ad859613fdcf1c7ffd093c3477fea4552ccccef9c99cd63ca2a215a7187e20e0de1fc942e2996d6671c25c6b190bf31
+  languageName: node
+  linkType: hard
+
+"ts-proto@npm:^2":
+  version: 2.11.6
+  resolution: "ts-proto@npm:2.11.6"
+  dependencies:
+    "@bufbuild/protobuf": "npm:^2.10.2"
+    case-anything: "npm:^2.1.13"
+    ts-poet: "npm:^6.12.0"
+    ts-proto-descriptors: "npm:2.1.0"
+  bin:
+    protoc-gen-ts_proto: protoc-gen-ts_proto
+  checksum: 10c0/113f5749b6866e321a0d56585bac14feebda5b17a077d7b156a76ea265b445ad1c799befdd5c5152f53ebfc7d8216336034f1596a5bf4d859da79f9c7cac2a4e
   languageName: node
   linkType: hard
 

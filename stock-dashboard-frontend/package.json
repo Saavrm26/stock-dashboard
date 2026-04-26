@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "proto:gen": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=./model/generated --ts_proto_opt=esModuleInterop=true,outputServices=generic-definitions,useExactTypes=false --proto_path=../common/proto ../common/proto/v1/ticker_details.proto",
+    "prebuild": "npm run proto:gen",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -21,6 +23,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.3",
     "tailwindcss": "^4",
+    "ts-proto": "^2",
     "typescript": "^5"
   }
 }
