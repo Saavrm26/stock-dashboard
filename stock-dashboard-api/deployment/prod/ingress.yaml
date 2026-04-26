@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: playground-ingress
+  name: stock-dashboard-ingress
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
@@ -12,7 +12,7 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-    - host: stocks.api.saarthakdevelopsstuff.xyz
+    - host: stocks-api.saarthakdevelopsstuff.xyz
       http:
         paths:
           - path: /

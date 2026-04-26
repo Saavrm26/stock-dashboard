@@ -20,7 +20,7 @@ spring:
           cognito:
             client-secret: "${client-secret}"
             client-id: 2r5efhos59gv3fs6hk59g604c3
-            redirect-uri: https://stocks.api.saarthakdevelopsstuff.xyz/login/oauth2/code/cognito
+            redirect-uri: https://stocks-api.saarthakdevelopsstuff.xyz/login/oauth2/code/cognito
         provider:
           cognito:
             issuerUri: https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_KVzxBoBd9
