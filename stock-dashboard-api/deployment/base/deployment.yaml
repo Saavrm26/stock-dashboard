@@ -5,7 +5,7 @@ metadata:
   labels:
     app: stock-dashboard-api
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: stock-dashboard-api
