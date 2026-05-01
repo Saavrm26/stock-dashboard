@@ -1,0 +1,54 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          cognito:
+            provider: cognito
+            client-id: test-client-id
+            client-secret: test-client-secret
+            scope: openid,profile,email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            authorization-grant-type: authorization_code
+            client-name: Cognito
+        provider:
+          cognito:
+            issuer-uri:
+            authorization-uri: https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_XXXXXXXXX/oauth2/authorize
+            token-uri: https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_XXXXXXXXX/oauth2/token
+            user-info-uri: https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_XXXXXXXXX/oauth2/userInfo
+            jwk-set-uri: https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_XXXXXXXXX/.well-known/jwks.json
+            user-name-attribute: cognito:username
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_XXXXXXXXX/.well-known/jwks.json
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+    initialization-mode: never
+
+cognito:
+  client-id: test-client-id
+  issuer-uri: https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_XXXXXXXXX
+  defaultSuccessUrl: http://localhost:3000
+  logoutRedirectUrl: http://localhost:3000
+
+clients:
+  stock:
+    url: http://localhost:8081
+
+logging:
+  level:
+    xyz.saarthakdevelopsstuff.stock_dashboard_api: DEBUG
+    org.springframework: INFO
+    org.hibernate: WARN
+    org.springframework.security: DEBUG
+
+server:
+  port: 8080

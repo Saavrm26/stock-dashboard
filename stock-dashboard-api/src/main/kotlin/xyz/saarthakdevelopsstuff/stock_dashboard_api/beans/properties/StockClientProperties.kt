@@ -6,5 +6,5 @@ import org.springframework.validation.annotation.Validated
 @Validated
 @ConfigurationProperties(prefix = "clients.stock")
 data class StockClientProperties(
-    val url: String
+    val url: String = ""
 )

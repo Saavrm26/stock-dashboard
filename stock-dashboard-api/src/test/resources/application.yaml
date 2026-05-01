@@ -1,19 +1,92 @@
 spring:
+  application:
+    name: stock_dashboard_api
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
     username: sa
-    password:
+    password: password
 
   jpa:
-    hibernate:
-      ddl-auto: validate
     database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop # Ensures a clean schema for every test run
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
 
   flyway:
-    enabled: true
+    enabled: false
 
   cloud:
     aws:
+      region:
+        static: ap-south-1
       secretsmanager:
         enabled: false
+
+  security:
+    oauth2:
+      client:
+        registration:
+          cognito:
+            client-id: test-client-id
+            client-secret: test-client-secret
+            scope:
+              - phone
+              - openid
+              - email
+              - profile
+            redirect-uri: http://localhost:8080/login/oauth2/code/cognito
+        provider:
+          cognito:
+            issuer-uri: https://cognito-idp.us-east-1.amazonaws.com/test-pool-id
+            user-name-attribute: username
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://cognito-idp.us-east-1.amazonaws.com/test-pool-id/.well-known/jwks.json
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+        boot:
+          context:
+            config: DEBUG
+            properties: DEBUG
+    xyz.saarthakdevelopsstuff.stock_dashboard_api: DEBUG
+
+cognito:
+  domain: https://test-domain.auth.us-east-1.amazoncognito.com
+  client-id: test-client-id
+  defaultSuccessUrl: http://localhost:3000
+  logoutRedirectUrl: http://localhost:3000
+
+clients:
+  stock:
+    url: http://localhost:8081
+
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        secure: true
+        # same-site: strict
+
+  forward-headers-strategy: NATIVE
+
+management:
+  endpoint:
+    restart:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: restart
+
+app:
+  name: stock-dashboard-api-test
+  version: 1.0.0-test

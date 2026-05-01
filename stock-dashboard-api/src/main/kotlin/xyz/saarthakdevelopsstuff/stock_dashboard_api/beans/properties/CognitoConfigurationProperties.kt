@@ -6,8 +6,8 @@ import org.springframework.validation.annotation.Validated
 @Validated
 @ConfigurationProperties(prefix="cognito")
 data class CognitoConfigurationProperties(
-    val domain: String,
-    val clientId: String,
-    val logoutRedirectUrl: String,
-    val defaultSuccessUrl: String
+    val domain: String = "",
+    val clientId: String = "",
+    val logoutRedirectUrl: String = "",
+    val defaultSuccessUrl: String = ""
 )
