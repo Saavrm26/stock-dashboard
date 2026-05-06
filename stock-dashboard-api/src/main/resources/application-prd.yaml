@@ -33,3 +33,8 @@ cognito:
   client-id: 2r5efhos59gv3fs6hk59g604c3
   logoutRedirectUrl: https://stocks.saarthakdevelopsstuff.xyz
   defaultSuccessUrl: https://stocks.saarthakdevelopsstuff.xyz
+
+cors:
+  allowed-origins:
+    - https://stocks.saarthakdevelopsstuff.xyz
+    - https://ap-south-1kvzxbobd9.auth.ap-south-1.amazoncognito.com

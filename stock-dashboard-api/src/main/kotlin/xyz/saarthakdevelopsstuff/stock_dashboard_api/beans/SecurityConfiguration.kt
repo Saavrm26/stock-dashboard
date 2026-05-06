@@ -11,7 +11,10 @@ import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.savedrequest.NullRequestCache
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.properties.CognitoConfigurationProperties
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.properties.CorsConfigurationProperties
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.controller.auth.CognitoLogoutHandler
 
 // don't need any custom scopes right now. Will just continue with default scopes
@@ -39,6 +42,7 @@ class SecurityConfiguration {
             oauth2ResourceServer {
                 jwt { }
             }
+            cors { }
         }
         return httpSecurity.build()
     }
@@ -59,15 +63,31 @@ class SecurityConfiguration {
                 authorize(anyRequest, authenticated)
             }
             oauth2Login {
-                userInfoEndpoint {  }
+                userInfoEndpoint { }
                 defaultSuccessUrl(cognitoConfigurationProperties.defaultSuccessUrl, true)
             }
             logout {
                 logoutSuccessHandler = cognitoLogoutHandler
             }
             csrf { }
+            cors { }
         }
         return httpSecurity.build()
+    }
+
+    @Bean
+    fun corsConfigurationSource(corsConfigurationProperties: CorsConfigurationProperties): UrlBasedCorsConfigurationSource {
+        val configuration = CorsConfiguration()
+        configuration.allowedOriginPatterns = corsConfigurationProperties.allowedOrigins
+        // Allow common HTTP methods
+        configuration.allowedMethods = listOf("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS")
+        // Allow all headers
+        configuration.allowedHeaders = listOf("*")
+        // Allow credentials (cookies, authorization headers)
+        configuration.allowCredentials = true
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", configuration)
+        return source
     }
 
 }

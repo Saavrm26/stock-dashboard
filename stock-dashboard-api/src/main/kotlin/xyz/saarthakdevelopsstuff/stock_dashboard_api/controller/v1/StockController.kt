@@ -1,35 +1,31 @@
 package xyz.saarthakdevelopsstuff.stock_dashboard_api.controller.v1
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.oauth2.core.oidc.user.OidcUser
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
-import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.TickerDetailsOuterClass.TickerDetails
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.Ticker
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.CreateTickerRequest
+import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.TickerDetailsOuterClass
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.service.StockServiceV1
 
-// This would a admin only controller
 @RestController
-@RequestMapping("/api/v1/stocks")
+@RequestMapping("v1/stocks")
 class StockController(
     private val stockServiceV1: StockServiceV1
 ) {
-    @GetMapping
-    fun getAllTickers(): ResponseEntity<List<Ticker>> {
-        val tickers = stockServiceV1.getAllTickers()
-        return ResponseEntity<List<Ticker>>(tickers, HttpStatus.OK)
-    }
-
-    @PostMapping
-    fun addTicker(@RequestBody createTickerRequest: CreateTickerRequest): ResponseEntity<Ticker> {
-        val ticker = stockServiceV1.addTicker(createTickerRequest)
-        return ResponseEntity<Ticker>(ticker, HttpStatus.CREATED)
-    }
+    private val logger = LoggerFactory.getLogger(StockController::class.java)
 
     @GetMapping("/ticker-details", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getTickerDetails(@RequestParam query: String): ResponseEntity<TickerDetails> {
+    fun getTickerDetails(@RequestParam query: String, @AuthenticationPrincipal oidcUser: OidcUser) : ResponseEntity<TickerDetailsOuterClass.TickerDetails> {
+        logger.info("Fetching ticker details for query: $query, user: $oidcUser")
         val tickerDetails = stockServiceV1.getTickerDetails(query)
-        return ResponseEntity<TickerDetails>(tickerDetails, HttpStatus.OK)
+        return ResponseEntity<TickerDetailsOuterClass.TickerDetails>(tickerDetails, HttpStatus.OK)
     }
+
 }

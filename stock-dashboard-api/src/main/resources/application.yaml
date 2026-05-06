@@ -62,7 +62,10 @@ server:
 
   forward-headers-strategy: NATIVE
 
-
+cors:
+  allowed-origins:
+    - http://localhost:3000
+    - https://ap-south-10bo7lbvvf.auth.ap-south-1.amazoncognito.com
 
 management:
   endpoint:
