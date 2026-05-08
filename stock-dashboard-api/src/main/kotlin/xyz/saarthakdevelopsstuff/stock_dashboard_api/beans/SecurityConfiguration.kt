@@ -7,6 +7,8 @@ import org.springframework.core.annotation.Order
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.invoke
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
 import org.springframework.security.web.SecurityFilterChain
@@ -16,6 +18,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.properties.CognitoConfigurationProperties
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.properties.CorsConfigurationProperties
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.controller.auth.CognitoLogoutHandler
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.controller.auth.JsonRedirectStrategy
 
 // don't need any custom scopes right now. Will just continue with default scopes
 
@@ -50,10 +53,18 @@ class SecurityConfiguration {
     @Order(2)
     @Bean
     fun appSecurityFilterChain(
-        httpSecurity: HttpSecurity, cognitoLogoutHandler: CognitoLogoutHandler,
-        cognitoConfigurationProperties: CognitoConfigurationProperties
+        httpSecurity: HttpSecurity,
+        cognitoLogoutHandler: CognitoLogoutHandler,
+        cognitoConfigurationProperties: CognitoConfigurationProperties,
+        clientRegistrationRepository: ClientRegistrationRepository
     ): SecurityFilterChain {
         val nullRequestCache = NullRequestCache()
+        val oauth2AuthorizationRequestRedirectFilter =
+            OAuth2AuthorizationRequestRedirectFilter(clientRegistrationRepository)
+        oauth2AuthorizationRequestRedirectFilter.setAuthorizationRedirectStrategy(
+            JsonRedirectStrategy()
+        )
+
         httpSecurity {
             securityMatcher("/**")
             requestCache {
@@ -62,6 +73,9 @@ class SecurityConfiguration {
             authorizeHttpRequests {
                 authorize(anyRequest, authenticated)
             }
+            addFilterBefore<OAuth2AuthorizationRequestRedirectFilter>(
+               oauth2AuthorizationRequestRedirectFilter
+            )
             oauth2Login {
                 userInfoEndpoint { }
                 defaultSuccessUrl(cognitoConfigurationProperties.defaultSuccessUrl, true)
