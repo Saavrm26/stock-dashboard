@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { TickerDetails } from "@/model/generated/v1/ticker_details";
-import { getApiBase } from "@/app/lib/apiBase";
+import { fetchTickerDetails } from "@/app/lib/stockDashboardApiClient";
 import { TickerDetailsView } from "@/app/components/TickerDetailsView";
 
 export default function TickerPage() {
@@ -21,19 +21,8 @@ export default function TickerPage() {
 
     const fetchData = async () => {
       try {
-        const base = getApiBase();
-        console.log(`Fetching with base url ${base}`)
-        const url = `${base}/v1/stocks/ticker-details?query=${encodeURIComponent(
-          symbol
-        )}`;
-        const resp = await fetch(url, {
-          credentials: 'include'
-        });
-        if (!resp.ok) {
-          throw new Error(`API error: ${resp.status}`);
-        }
-        const json = await resp.json();
-        setData(json as TickerDetails);
+        const data = await fetchTickerDetails(symbol);
+        setData(data as TickerDetails);
       } catch (e: any) {
         setError(e.message ?? "Unknown error");
       } finally {
