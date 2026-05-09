@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1;
+
+message TickerSearchResponse {
+  repeated Quote quotes = 1;
+}
+
+message Quote {
+  string exchange = 1;
+  string shortname = 2;
+  string quoteType = 3;
+  string symbol = 4;
+  string index = 5;
+  double score = 6;
+  string typeDisp = 7;
+  string longname = 8;
+  string exchDisp = 9;
+  string sector = 10;
+  string sectorDisp = 11;
+  string industry = 12;
+  string industryDisp = 13;
+  bool dispSecIndFlag = 14;
+  bool isYahooFinance = 15;
+  string prevName = 16;
+  string nameChangeDate = 17;
+}
