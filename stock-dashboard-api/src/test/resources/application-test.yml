@@ -43,6 +43,11 @@ clients:
   stock:
     url: http://localhost:8081
 
+cors:
+  allowed-origins:
+    - http://localhost:3000
+    - https://ap-south-1kvzxbobd9.auth.ap-south-1.amazoncognito.com
+
 logging:
   level:
     xyz.saarthakdevelopsstuff.stock_dashboard_api: DEBUG

@@ -1,16 +1,12 @@
 package xyz.saarthakdevelopsstuff.stock_dashboard_api.controller.api.v1
 
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
-import org.slf4j.LoggerFactory
+import org.springframework.web.bind.annotation.*
 import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.TickerDetailsOuterClass
+import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.TickerSearch
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.Ticker
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.CreateTickerRequest
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.service.StockServiceV1
@@ -22,6 +18,7 @@ class StockApiController(
     private val stockServiceV1: StockServiceV1
 ) {
     private val logger = LoggerFactory.getLogger(StockApiController::class.java)
+
     @GetMapping
     fun getAllTickers(): ResponseEntity<List<Ticker>> {
         val tickers = stockServiceV1.getAllTickers()
@@ -39,5 +36,12 @@ class StockApiController(
         logger.info("Fetching ticker details for query: $query")
         val tickerDetails = stockServiceV1.getTickerDetails(query)
         return ResponseEntity<TickerDetailsOuterClass.TickerDetails>(tickerDetails, HttpStatus.OK)
+    }
+
+    @GetMapping("/search", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun searchTickers(@RequestParam query: String): ResponseEntity<TickerSearch.TickerSearchResponse> {
+        logger.info("Searching tickers for query: $query")
+        val searchResponse = stockServiceV1.searchTickers(query)
+        return ResponseEntity<TickerSearch.TickerSearchResponse>(searchResponse, HttpStatus.OK)
     }
 }

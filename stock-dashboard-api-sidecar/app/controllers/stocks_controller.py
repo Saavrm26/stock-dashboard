@@ -8,6 +8,12 @@ stocks_service = StocksService()
 
 
 @router.get("/ticker-details")
-def search_stocks(query: str):
+def get_stock_details(query: str):
     details = stocks_service.get_ticker_details(query)
     return MessageToDict(details)
+
+
+@router.get("/search")
+def search_stocks(query: str):
+    ticker_search = stocks_service.search_stock(query)
+    return MessageToDict(ticker_search)
