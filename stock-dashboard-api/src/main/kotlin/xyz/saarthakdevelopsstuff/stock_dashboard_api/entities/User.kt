@@ -8,7 +8,7 @@ import jakarta.persistence.Table
 @Entity
 @Table(name = "users")
 class User(
-    @Id private val id: String,
-    @Column(nullable = false) private val email: String,
-    @Column(name = "full_name", nullable = false) private val fullName: String
+    @Id val id: String,
+    @Column(nullable = false) val email: String,
+    @Column(name = "full_name", nullable = false) val fullName: String
 )

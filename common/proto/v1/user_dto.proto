@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1;
+
+message User {
+  string id = 1;
+  string full_name = 2;
+  string email = 3;
+}
