@@ -33,6 +33,27 @@ export async function fetchTickerDetails(symbol: string) {
  * Initiates the login flow.
  * Calls the Cognito authorization endpoint and follows any redirect returned by the API.
  */
+import { User } from "@/model/generated/v1/user_dto"; // Import the User interface
+
+export async function fetchCurrentUser(): Promise<User | null> {
+  const base = getApiBase();
+  const url = `${base}/v1/users/me`;
+  const resp = await fetch(url, { credentials: "include" });
+
+  if (!resp.ok) {
+    // We still attempt to parse JSON even if !resp.ok to check for redirectUrl
+    // If there's a non-200 status and no redirectUrl, it's a true error.
+  }
+
+  const json = await resp.json();
+
+  if (json?.redirectUrl) {
+    return null; // Do NOT perform redirect here, just indicate no user is logged in.
+  }
+
+  return json as User;
+}
+
 export async function login() {
   const base = getApiBase();
   const url = `${base}/oauth2/authorization/cognito`;

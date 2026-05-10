@@ -1,6 +1,7 @@
 package xyz.saarthakdevelopsstuff.stock_dashboard_api.controller.v1
 
 import org.slf4j.LoggerFactory
+import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.core.oidc.user.OidcUser
 import org.springframework.web.bind.annotation.GetMapping
@@ -18,7 +19,7 @@ class UserController(
 ) {
     private val logger = LoggerFactory.getLogger(UserController::class.java)
 
-    @GetMapping("me")
+    @GetMapping("me", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getCurrentUser(@AuthenticationPrincipal user: OidcUser): UserDto.User {
         logger.info("Fetching the current user ${user.subject}")
         val user = stockDashboardOAuth2UserService.getUser(user.subject)
