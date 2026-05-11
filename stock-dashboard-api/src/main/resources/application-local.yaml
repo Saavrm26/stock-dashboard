@@ -20,6 +20,14 @@ spring:
   jpa:
     show-sql: true
 
+  session:
+    store-type: redis
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
 server:
   servlet:
     session:
