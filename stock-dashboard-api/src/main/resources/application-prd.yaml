@@ -13,6 +13,14 @@ spring:
   jpa:
     show-sql: false
 
+  session:
+    store-type: redis
+
+  data:
+    redis:
+      host: redis-headless
+      port: 6379
+
   security:
     oauth2:
       client:

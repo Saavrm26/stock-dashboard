@@ -67,6 +67,10 @@ resource "kubernetes_stateful_set_v1" "redis" {
       }
 
       spec {
+        security_context {
+          fs_group = 999
+        }
+
         container {
           name  = "redis"
           image = "docker.io/library/redis:8.6-trixie"
