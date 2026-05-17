@@ -33,6 +33,14 @@ resource "aws_eks_addon" "kube_proxy" {
   resolve_conflicts_on_update = "OVERWRITE"
 }
 
+resource "aws_eks_addon" "ebs_csi" {
+  cluster_name             = module.eks.cluster_name
+  addon_name               = "aws-ebs-csi-driver"
+  service_account_role_arn = aws_iam_role.ebs_csi_driver.arn
+  resolve_conflicts_on_create = "OVERWRITE"
+  resolve_conflicts_on_update = "OVERWRITE"
+}
+
 # This is to allow ALB to send traffic to nodes and consequently to pods
 resource "aws_security_group" "aws_alb_shared_backend_sg" {
   name        = "k8s-traffic-${module.eks.cluster_name}"
@@ -62,16 +70,16 @@ resource "aws_security_group" "aws_alb_shared_backend_sg" {
     description      = "Allow all outbound"
     from_port        = 0
     to_port          = 0
-    protocol         = "-1"  # -1 means all protocols
+    protocol         = "-1" # -1 means all protocols
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
 
   tags = {
-    "elbv2.k8s.aws/cluster" = module.eks.cluster_name
+    "elbv2.k8s.aws/cluster"  = module.eks.cluster_name
     "elbv2.k8s.aws/resource" = "backend-sg"
-    Terraform   = "true"
-    Environment = "dev"
+    Terraform                = "true"
+    Environment              = "dev"
   }
 }
 
@@ -99,7 +107,7 @@ module "spot_eks_managed_node_group" {
   cluster_primary_security_group_id = module.eks.cluster_primary_security_group_id
   cluster_service_cidr              = module.eks.cluster_service_cidr
   vpc_security_group_ids            = [module.eks.node_security_group_id, aws_security_group.aws_allow_traffic_from_alb.id]
-  kubernetes_version = "1.34"
+  kubernetes_version                = "1.34"
 
   min_size        = var.min_size
   max_size        = var.max_size

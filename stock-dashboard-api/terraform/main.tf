@@ -24,6 +24,7 @@ provider "kubernetes" {
   }
 }
 
+
 module "stock_dashboard_vpc" {
   source = "./modules/vpc"
 
@@ -62,8 +63,8 @@ module "stock_dashboard_k8s" {
   db_user               = module.stock_dashboard_db[0].database_user
   aurora_db_secret_arn = module.stock_dashboard_db[0].aurora_db_secret_arn
   # just to be safe, theoretically it is not required as the k8s provider depends on eks init
-  depends_on = [module.stock_dashboard_eks, module.stock_dashboard_db]
   eks_oidc_provider     = module.stock_dashboard_eks.eks_oidc_provider
   eks_oidc_provider_arn = module.stock_dashboard_eks.eks_oidc_provider_arn
   custom_app_policy_arn = var.custom_app_policy_arn
+  depends_on = [module.stock_dashboard_eks, module.stock_dashboard_db]
 }
