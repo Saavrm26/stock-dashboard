@@ -2,19 +2,18 @@
 
 import Link from 'next/link';
 import { useAuth } from '@/app/lib/AuthContext';
-import { FaUserCircle } from 'react-icons/fa'
 import { login } from '../lib/stockDashboardApiClient';
 
 export function NavBar() {
   const { user, isLoading, setShowLoginPopup } = useAuth();
   const isLoggedIn = !!user;
+
   const handleUserIconClick = (e: React.MouseEvent) => {
     if (!user) {
-      e.preventDefault(); // Prevent navigation if not logged in
-      setShowLoginPopup(true); // Open login popup
+      e.preventDefault();
+      setShowLoginPopup(true);
     }
   };
-
 
   const handleSignIn = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -26,25 +25,45 @@ export function NavBar() {
   };
 
   return (
-    <nav className="bg-gray-800 p-4 text-white flex justify-between items-center">
-      <Link href="/" className="text-xl font-bold">
-        Stock Dashboard
-      </Link>
-      <div className="flex items-center space-x-4">
+    <nav className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-16 h-20 bg-surface/80 backdrop-blur-md border-b border-outline-variant">
+      <div className="flex items-center gap-6 md:gap-12">
+        <Link href="/" className="text-xl md:text-2xl font-black tracking-tighter text-primary">
+          STOCK DASHBOARD
+        </Link>
+        <div className="hidden md:flex items-center gap-8">
+          <Link className="text-primary font-medium text-sm md:text-base" href="#">
+            Home
+          </Link>
+          <Link className="text-on-surface-variant hover:text-primary transition-colors text-sm md:text-base" href="#features">
+            Features
+          </Link>
+        </div>
+      </div>
+      <div className="flex items-center gap-4 md:gap-6">
         {!isLoading && (
           isLoggedIn ? (
             <div className="relative">
               <Link href="/me" onClick={handleUserIconClick}>
-                <FaUserCircle className="text-2xl cursor-pointer hover:text-gray-300" />
+                <div className="text-on-surface-variant hover:text-primary transition-colors text-sm md:text-base font-medium cursor-pointer">
+                  Profile
+                </div>
               </Link>
             </div>
           ) : (
-            <button
-              onClick={handleSignIn}
-              className="inline-flex w-full items-center justify-center rounded-lg bg-zinc-900 px-4 py-3 text-sm font-medium text-zinc-50 shadow-sm transition-colors hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:outline-zinc-100"
-            >
-              Sign in
-            </button>
+            <>
+              <button
+                onClick={handleSignIn}
+                className="text-on-surface-variant hover:text-primary transition-colors text-sm md:text-base font-medium"
+              >
+                Sign In
+              </button>
+              <button
+                onClick={handleSignIn}
+                className="px-5 py-2 bg-primary text-on-primary font-semibold rounded-lg hover:bg-secondary-fixed transition-all text-sm md:text-base"
+              >
+                Get Started
+              </button>
+            </>
           )
         )}
       </div>

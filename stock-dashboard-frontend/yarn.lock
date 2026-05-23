@@ -612,6 +612,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@material-symbols/svg-400@npm:^0.44.9":
+  version: 0.44.9
+  resolution: "@material-symbols/svg-400@npm:0.44.9"
+  checksum: 10c0/e2198aeb6f3fd2701fe9d7a01e38e2c1d1baae9f8f70360adc54e30d448d4eaac2ca8bbec301bc71188c43b53abc2fe8ce98e1bbc4f2f31826a3a2e791cf7619
+  languageName: node
+  linkType: hard
+
 "@napi-rs/wasm-runtime@npm:^0.2.11, @napi-rs/wasm-runtime@npm:^1.1.1":
   version: 0.2.12
   resolution: "@napi-rs/wasm-runtime@npm:0.2.12"
@@ -3935,6 +3942,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "stock-dashboard-frontend@workspace:."
   dependencies:
+    "@material-symbols/svg-400": "npm:^0.44.9"
     "@tailwindcss/postcss": "npm:^4"
     "@types/node": "npm:^20.19.39"
     "@types/react": "npm:^19"
