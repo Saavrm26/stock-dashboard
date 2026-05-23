@@ -96,7 +96,6 @@ resource "kubernetes_stateful_set_v1" "redis" {
       spec {
         access_modes = ["ReadWriteOnce"]
         storage_class_name = "gp3"
-
         resources {
           requests = {
             storage = "1Gi"
@@ -105,4 +104,6 @@ resource "kubernetes_stateful_set_v1" "redis" {
       }
     }
   }
+
+  depends_on = [ kubernetes_storage_class_v1.gp3 ]
 }
