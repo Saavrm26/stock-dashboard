@@ -49,6 +49,13 @@
   --tertiary-fixed-dim: #c6c6c7;
   --on-tertiary-fixed-variant: #454747;
   --surface-tint: #c6c6c7;
+  --navbar-height: 80px; /* Default for mobile */
+}
+
+@media (min-width: 768px) { /* Tailwind's 'md' breakpoint */
+  :root {
+    --navbar-height: 80px; /* Desktop height */
+  }
 }
 
 @theme inline {
@@ -101,6 +108,9 @@
   --color-surface-tint: var(--surface-tint);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --spacing-navbar: var(--navbar-height, 80px);
+  --height-navbar: var(--navbar-height, 80px);
+  --inset-navbar: var(--navbar-height, 80px);
 }
 
 body {

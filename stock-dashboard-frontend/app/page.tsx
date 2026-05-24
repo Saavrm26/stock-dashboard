@@ -3,7 +3,7 @@ import Footer from "./components/Footer";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-background text-on-surface">
+    <main className="min-h-screen bg-background text-on-surface pt-navbar">
       {/* Hero Section */}
       <section className="relative overflow-hidden px-4 md:px-16 py-24 md:py-32">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6 items-center">

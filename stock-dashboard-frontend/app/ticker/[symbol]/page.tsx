@@ -59,7 +59,7 @@ export default function TickerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-on-surface">
+    <div className="min-h-screen bg-background text-on-surface pt-navbar">
       <TickerDetailsView details={data} />
       <Footer />
     </div>
