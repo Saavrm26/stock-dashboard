@@ -13,6 +13,8 @@ export async function fetchTickerDetails(symbol: string) {
   const url = `${base}/v1/stocks/ticker-details?query=${encodeURIComponent(symbol)}`;
   const resp = await fetch(url, { credentials: "include" });
 
+  // Fetch internally follows redirects until the final response.
+  // Our server gives 200 with { redirectUrl } after /oauth2/authorization/cognito if user is not logged in.
   if (!resp.ok) {
     throw new Error(`API error: ${resp.status}`);
   }
@@ -27,6 +29,27 @@ export async function fetchTickerDetails(symbol: string) {
   }
 
   return json;
+}
+
+import { TickerSearchResponse } from "@/model/generated/v1/ticker_search"
+export async function searchTickers(query: string): Promise<TickerSearchResponse> {
+  const base = getApiBase();
+  const url = `${base}/v1/stocks/search?query=${encodeURIComponent(query)}`;
+  const resp = await fetch(url, { credentials: "include" });
+
+  if (!resp.ok) {
+    throw new Error(`API error: ${resp.status}`);
+  }
+
+  const json = await resp.json();
+
+  // If the API signals a redirect, perform it.
+  if (json?.redirectUrl) {
+    window.location.href = json.redirectUrl;
+    // Return a never‑resolving promise to stop further processing.
+    return new Promise(() => {});
+  }
+  return json as TickerSearchResponse;
 }
 
 /**
