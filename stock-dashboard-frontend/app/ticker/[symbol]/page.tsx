@@ -24,8 +24,12 @@ export default function TickerPage() {
       try {
         const data = await fetchTickerDetails(symbol);
         setData(data as TickerDetails);
-      } catch (e: any) {
-        setError(e.message ?? "Unknown error");
+      } catch (e: unknown) {
+        if (e instanceof Error) {
+          setError(e.message);
+        } else {
+          setError(`An unknown error occurred while fetching ticker details. ${e}`);
+        }
       } finally {
         setLoading(false);
       }

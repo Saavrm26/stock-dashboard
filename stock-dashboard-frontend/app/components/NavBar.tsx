@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useAuth } from '@/app/lib/AuthContext';
 import { login } from '../lib/stockDashboardApiClient';
+import { Search } from './Search';
 
 export function NavBar() {
   const { user, isLoading, setShowLoginPopup } = useAuth();
@@ -19,8 +20,13 @@ export function NavBar() {
     e.preventDefault();
     try {
       await login();
-    } catch (err: any) {
-      console.error("Login failed:", err);
+    } catch (err: unknown) {
+      // Check if the error is an instance of the native Error object
+      if (err instanceof Error) {
+        console.error("Login failed:", err.message);
+      } else {
+        console.error("Login failed with an unknown error:", err);
+      }
     }
   };
 
@@ -42,15 +48,19 @@ export function NavBar() {
       <div className="flex items-center gap-4 md:gap-6">
         {!isLoading && (
           isLoggedIn ? (
-            <div className="relative">
-              <Link href="/me" onClick={handleUserIconClick}>
-                <div className="text-on-surface-variant hover:text-primary transition-colors text-sm md:text-base font-medium cursor-pointer">
-                  Profile
-                </div>
-              </Link>
-            </div>
+            <>
+              <Search />
+              <div className="relative">
+                <Link href="/me" onClick={handleUserIconClick}>
+                  <div className="text-on-surface-variant hover:text-primary transition-colors text-sm md:text-base font-medium cursor-pointer">
+                    Profile
+                  </div>
+                </Link>
+              </div>
+            </>
           ) : (
             <>
+              <Search />
               <button
                 onClick={handleSignIn}
                 className="text-on-surface-variant hover:text-primary transition-colors text-sm md:text-base font-medium"

@@ -2,12 +2,10 @@
 
 import { useEffect } from 'react';
 import { useAuth } from '@/app/lib/AuthContext';
-import { useRouter } from 'next/navigation';
 import ProfileView from '@/app/components/ProfileView';
 
 export default function MePage() {
   const { user, isLoading, showLoginPopup, setShowLoginPopup } = useAuth();
-  const router = useRouter();
 
   useEffect(() => {
     if (!isLoading && !user && !showLoginPopup) {
