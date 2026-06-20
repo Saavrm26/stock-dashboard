@@ -1,10 +1,15 @@
 package xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.mappers
 
 import org.mapstruct.Mapper
-import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.UserDto
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.User
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.User as DbUser
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.dto.UserResponse
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.service.User as ServiceUser
 
 @Mapper(componentModel = "spring")
 interface UserMapper {
-    fun toUserDto(user: User?): UserDto.User
+    fun toUserServiceModel(user: DbUser?): ServiceUser?
+
+    fun toDbUser(user: ServiceUser): DbUser
+
+    fun toUserResponse(user: ServiceUser?): UserResponse
 }

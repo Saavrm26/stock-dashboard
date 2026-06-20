@@ -1,9 +1,9 @@
 plugins {
-	id 'org.jetbrains.kotlin.jvm' version '2.2.21'
-	id 'org.jetbrains.kotlin.plugin.spring' version '2.2.21'
-	id 'org.springframework.boot' version '3.3.5'
-	id 'io.spring.dependency-management' version '1.1.7'
-	id 'org.jetbrains.kotlin.plugin.jpa' version '2.2.21'
+    id 'org.jetbrains.kotlin.jvm' version '2.2.21'
+    id 'org.jetbrains.kotlin.plugin.spring' version '2.2.21'
+    id 'org.springframework.boot' version '3.3.5'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.jetbrains.kotlin.plugin.jpa' version '2.2.21'
     id 'com.google.devtools.ksp' version '2.3.4'
     id "org.jetbrains.kotlin.kapt" version "2.3.10"
     id "com.google.protobuf" version "0.9.6"
@@ -14,60 +14,71 @@ version = '0.0.1-SNAPSHOT'
 description = 'Demo project for Spring Boot'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencyManagement {
-	imports {
-		mavenBom "org.springframework.boot:spring-boot-dependencies:3.3.5"
-		mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2023.0.3'
-		mavenBom 'io.awspring.cloud:spring-cloud-aws-dependencies:3.2.1'
-		mavenBom 'org.springframework.session:spring-session-bom:3.3.5'
+    imports {
+        mavenBom "org.springframework.boot:spring-boot-dependencies:3.3.5"
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2023.0.3'
+        mavenBom 'io.awspring.cloud:spring-cloud-aws-dependencies:3.2.1'
+        mavenBom 'org.springframework.session:spring-session-bom:3.3.5'
         mavenBom 'com.google.protobuf:protobuf-bom:4.33.5'
-	}
+        mavenBom 'com.fasterxml.jackson:jackson-bom:2.22.1'
+    }
 }
 
 dependencies {
     // deps from BOMs
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'org.springframework.cloud:spring-cloud-starter'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.jetbrains.kotlin:kotlin-reflect'
-	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
-	implementation 'io.awspring.cloud:spring-cloud-aws-starter'
-	implementation 'software.amazon.awssdk:sts'
-	implementation 'io.awspring.cloud:spring-cloud-aws-starter-secrets-manager'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.cloud:spring-cloud-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.hibernate.orm:hibernate-core'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter'
+    implementation 'software.amazon.awssdk:sts'
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-secrets-manager'
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-parameter-store'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation "org.springframework.boot:spring-boot-starter-security"
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    implementation 'com.hubspot.jackson:jackson-datatype-protobuf:0.10.0'
+    implementation 'com.google.protobuf:protobuf-kotlin'
     implementation 'com.google.protobuf:protobuf-java'
     implementation 'com.google.protobuf:protobuf-java-util'
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'org.springframework.session:spring-session-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.session:spring-session-data-redis'
+    implementation 'org.hibernate.validator:hibernate-validator'
+    implementation 'jakarta.json:jakarta.json-api'
+    implementation 'org.eclipse.parsson:jakarta.json:1.1.9'
+    // direct json p object serde
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jakarta-jsonp'
     runtimeOnly 'org.postgresql:postgresql'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'com.h2database:h2'
-	testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    // Deps not from BOMs
     implementation 'org.flywaydb:flyway-core:11.20.3'
     implementation 'org.mapstruct:mapstruct:1.7.0.Beta1'
     kapt 'org.mapstruct:mapstruct-processor:1.7.0.Beta1'
     runtimeOnly 'org.flywaydb:flyway-database-postgresql:11.20.3'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:postgresql'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
+    testImplementation 'org.mockito.kotlin:mockito-kotlin:5.1.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 kotlin {
-	compilerOptions {
-		freeCompilerArgs.addAll '-Xjsr305=strict', '-Xannotation-default-target=param-property'
-	}
+    compilerOptions {
+        freeCompilerArgs.addAll '-Xjsr305=strict', '-Xannotation-default-target=param-property'
+    }
 }
 
 sourceSets {
@@ -83,15 +94,26 @@ protobuf {
     protoc {
         artifact = "com.google.protobuf:protoc:4.33.5"
     }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {}
+                kotlin {}
+            }
+        }
+    }
+
 }
 
 allOpen {
-	annotation 'jakarta.persistence.Entity'
-	annotation 'jakarta.persistence.MappedSuperclass'
-	annotation 'jakarta.persistence.Embeddable'
+    annotation 'jakarta.persistence.Entity'
+    annotation 'jakarta.persistence.MappedSuperclass'
+    annotation 'jakarta.persistence.Embeddable'
     annotation 'org.springframework.boot.context.properties.ConfigurationProperties'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
+    environment 'DOCKER_HOST', 'unix:///run/user/1000/podman/podman.sock'
+    environment 'TESTCONTAINERS_RYUK_DISABLED', 'true'
 }

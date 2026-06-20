@@ -9,6 +9,7 @@ import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.body
+import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.TickerDetailsOuterClass.TickerDetailsList
 import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.TickerDetailsOuterClass.TickerDetails
 import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.TickerSearch.TickerSearchResponse
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.properties.StockClientProperties
@@ -61,6 +62,19 @@ class StockClient(restClientBuilder: RestClient.Builder, stockClientProperties: 
         return restClient.get().uri {
             it.path("/api/v1/stocks/search").queryParam("query", query).build()
         }.retrieve().body<TickerSearchResponse>()
+    }
+
+    fun getBulkTickerDetails(tickers: List<String>): TickerDetailsList {
+        val tickers = restClient.post()
+            .uri { it.path("/api/v1/stocks/bulk/ticker-details").build() }
+            .body(tickers)
+            .retrieve()
+            .body<TickerDetailsList>() ?: throw StockClientException(
+            StockClientErrorCode.DOWNSTREAM_FAILURE, """
+                Downstream api response is malformed.
+            """.trimIndent()
+            )
+        return tickers
     }
 
 }
