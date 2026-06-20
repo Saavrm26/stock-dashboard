@@ -56,7 +56,8 @@ class SecurityConfiguration {
         httpSecurity: HttpSecurity,
         cognitoLogoutHandler: CognitoLogoutHandler,
         cognitoConfigurationProperties: CognitoConfigurationProperties,
-        clientRegistrationRepository: ClientRegistrationRepository
+        clientRegistrationRepository: ClientRegistrationRepository,
+        stockDashboardOAuth2UserService: StockDashboardOAuth2UserService
     ): SecurityFilterChain {
         val nullRequestCache = NullRequestCache()
         val oauth2AuthorizationRequestRedirectFilter =
@@ -77,7 +78,9 @@ class SecurityConfiguration {
                oauth2AuthorizationRequestRedirectFilter
             )
             oauth2Login {
-                userInfoEndpoint { }
+                userInfoEndpoint {
+                    oidcUserService = stockDashboardOAuth2UserService
+                }
                 defaultSuccessUrl(cognitoConfigurationProperties.defaultSuccessUrl, true)
             }
             logout {

@@ -3,11 +3,13 @@ package xyz.saarthakdevelopsstuff.stock_dashboard_api
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.context.annotation.Import
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
 import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Import(TestContainersConfiguration::class)
 class StockDashboardApiApplicationTests {
 
     // This prevents Spring from trying to validate the Cognito Issuer URI 
