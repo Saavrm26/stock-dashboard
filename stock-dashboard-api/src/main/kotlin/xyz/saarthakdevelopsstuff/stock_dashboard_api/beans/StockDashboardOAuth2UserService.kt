@@ -32,7 +32,7 @@ class StockDashboardOAuth2UserService(
         val userName = claims["username"] as String
         val fullName = claims["name"] as String
         val user = userRepository.findById(userName)
-        if (user == null) {
+        if (user.isEmpty) {
             saveStandardUser(fullName, userName, email)
         }
         return userDto
