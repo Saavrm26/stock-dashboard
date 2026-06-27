@@ -1,20 +1,23 @@
 package xyz.saarthakdevelopsstuff.stock_dashboard_api.beans
 
 import org.junit.jupiter.api.*
-import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.test.mock.mockito.SpyBean
 import org.springframework.context.annotation.Import
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest
 import org.springframework.security.oauth2.client.registration.ClientRegistration
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
 import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.core.OAuth2AccessToken
 import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames
 import org.springframework.security.oauth2.core.oidc.OidcIdToken
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.TestContainersConfiguration
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.factories.UserFactory
@@ -34,6 +37,9 @@ import kotlin.test.assertTrue
 @DisplayName("StockDashboardOAuth2UserService Tests")
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class StockDashboardOAuth2UserServiceTest {
+
+    @MockBean
+    private lateinit var clientRegistrationRepository: ClientRegistrationRepository
 
     @SpyBean
     private lateinit var oidcUserService: OidcUserService
@@ -84,7 +90,7 @@ class StockDashboardOAuth2UserServiceTest {
         val mockIdToken = OidcIdToken("mock-id-token-value", Instant.now(), Instant.now().plusSeconds(3600), mapOf(
             "sub" to userName,
             "email" to email,
-            "name" to fullName
+            "name" to fullName,
             "username" to userName
         ))
 
@@ -106,27 +112,25 @@ class StockDashboardOAuth2UserServiceTest {
      */
     private fun createMockOidcUser(userName: String, email: String, fullName: String): DefaultOidcUser {
         val claims: Map<String, Any> = mapOf(
+            "sub" to userName,
             "email" to email,
             "username" to userName,
             "name" to fullName
         )
 
         val idToken = OidcIdToken.withTokenValue("id-token-value")
-            .claims { claims }
+            .claim("sub", userName)
+            .claim("email", email)
+            .claim("username", userName)
+            .claim("name", fullName)
             .build()
 
-        val accessToken = OAuth2AccessToken(
-            OAuth2AccessToken.TokenType.BEARER,
-            "access-token-value",
-            Instant.now(),
-            Instant.now().plusSeconds(3600)
-        )
 
         return DefaultOidcUser(
-            authorities = emptyList(),
-            idToken = idToken,
-            userInfo = claims,
-            nameAttributeKey = IdTokenClaimNames.SUB
+            emptyList(),
+            idToken,
+            OidcUserInfo(claims),
+            IdTokenClaimNames.SUB
         )
     }
 
@@ -162,10 +166,11 @@ class StockDashboardOAuth2UserServiceTest {
         val mockRequest = createMockOidcUserRequest(userName, email, fullName)
         val mockOidcUser = createMockOidcUser(userName, email, fullName)
 
-        whenever(oidcUserService.loadUser(any())).thenReturn(mockOidcUser)
+//        whenever(oidcUserService.loadUser(mockRequest)).thenReturn(mockOidcUser)
+        doReturn(mockOidcUser).whenever(oidcUserService).loadUser(mockRequest)
 
         // Pre-conditions: User should not exist, no watchlists
-        assertNull(userRepository.findById(userName), "User should not exist initially")
+        assertTrue(userRepository.findById(userName).isEmpty, "User should not exist initially")
         assertTrue(watchListRepository.findAll().isEmpty(), "No watchlists should exist initially")
 
         // Act - Call the public loadUser method
@@ -179,8 +184,7 @@ class StockDashboardOAuth2UserServiceTest {
         assertEquals(userName, result.name,  "Result name should match username" )
 
         // Assert - User should be created in database
-        val createdUser = userRepository.findById(userName)
-        assertNotNull(createdUser,  "User should be created" )
+        val createdUser = requireNotNull(userRepository.findById(userName).orElse(null)) { "User should be created" }
         assertEquals(userName, createdUser.id,  "User ID should match" )
         assertEquals(email, createdUser.email,  "User email should match" )
         assertEquals(fullName, createdUser.fullName,  "User full name should match" )
@@ -216,7 +220,7 @@ class StockDashboardOAuth2UserServiceTest {
         val mockRequest = createMockOidcUserRequest(userName, newEmail, newFullName)
         val mockOidcUser = createMockOidcUser(userName, newEmail, newFullName)
 
-        whenever(oidcUserService.loadUser(any())).thenReturn(mockOidcUser)
+        doReturn(mockOidcUser).whenever(oidcUserService).loadUser(mockRequest)
 
         // Pre-conditions: Check initial state
         assertEquals(1, userRepository.count(), "One user should exist initially")
@@ -239,8 +243,7 @@ class StockDashboardOAuth2UserServiceTest {
         assertEquals(1, userRepository.count()," \"User count should remain unchanged\" " )
 
         // Assert - Original user should still exist with unchanged data
-        val originalUser = userRepository.findById(userName)
-        assertNotNull(originalUser) { "Original user should still exist" }
+        val originalUser = requireNotNull(userRepository.findById(userName).orElse(null)) { "Original user should still exist" }
         assertEquals(fullName, originalUser.fullName, "Original user data should be unchanged")
         assertEquals(email, originalUser.email, "Original user email should be unchanged")
     }
@@ -267,7 +270,7 @@ class StockDashboardOAuth2UserServiceTest {
         val mockRequest = createMockOidcUserRequest(userName, email, fullName)
         val mockOidcUser = createMockOidcUser(userName, email, fullName)
 
-        whenever(oidcUserService.loadUser(any())).thenReturn(mockOidcUser)
+        doReturn(mockOidcUser).whenever(oidcUserService).loadUser(mockRequest)
 
         // Pre-conditions
         assertEquals(1, userRepository.count(), "One user should exist")
@@ -290,9 +293,8 @@ class StockDashboardOAuth2UserServiceTest {
         assertEquals(1, watchListRepository.count(), " \"Watchlist count should remain unchanged\" ")
 
         // Assert - Original watchlist should still exist
-        val watchlist = watchListRepository.findById(existingWatchlist.id!!)
-        assertTrue(watchlist.isPresent) { "Original watchlist should still exist" }
-        assertEquals("My watch list", watchlist.get().name, "Original watchlist data should be unchanged" )
+        val watchlist = requireNotNull(watchListRepository.findById(existingWatchlist.id!!).orElse(null)) { "Original watchlist should still exist" }
+        assertEquals("My watch list", watchlist.name, "Original watchlist data should be unchanged" )
     }
 
     @Test
@@ -308,10 +310,9 @@ class StockDashboardOAuth2UserServiceTest {
         userRepository.save(user)
 
         // Act
-        val foundUser = stockDashboardOAuth2UserService.getUser(userName)
+        val foundUser = requireNotNull(stockDashboardOAuth2UserService.getUser(userName)) { "User should be found" }
 
         // Assert
-        assertNotNull(foundUser) { "User should be found" }
         assertEquals(userName, foundUser.id,  "User ID should match" )
         assertEquals(email, foundUser.email,  "User email should match" )
         assertEquals(fullName, foundUser.fullName,  "User full name should match" )
@@ -356,16 +357,15 @@ class StockDashboardOAuth2UserServiceTest {
         val mockRequest = createMockOidcUserRequest(userName, email, fullName)
         val mockOidcUser = createMockOidcUser(userName, email, fullName)
 
-        whenever(oidcUserService.loadUser(any())).thenReturn(mockOidcUser)
+        doReturn(mockOidcUser).whenever(oidcUserService).loadUser(mockRequest)
 
         // Create user through service's public method
         stockDashboardOAuth2UserService.loadUser(mockRequest)
 
         // Act
-        val foundUser = stockDashboardOAuth2UserService.getUser(userName)
+        val foundUser = requireNotNull(stockDashboardOAuth2UserService.getUser(userName)) { "User created through loadUser should be found via getUser" }
 
         // Assert
-        assertNotNull(foundUser) { "User created through loadUser should be found via getUser" }
         assertEquals(userName, foundUser.id,  "User ID should match" )
         assertEquals(email, foundUser.email,  "User email should match" )
         assertEquals(fullName, foundUser.fullName,  "User full name should match" )
@@ -373,8 +373,8 @@ class StockDashboardOAuth2UserServiceTest {
 
     @Test
     @Order(8)
-    @DisplayName("loadUser - multiple users get created with各自 watchlists")
-    fun testLoadUser_MultipleUsers_CreatedWith各自Watchlists() {
+    @DisplayName("loadUser - multiple users get created with watchlists")
+    fun testLoadUser_MultipleUsers_CreatedWithWatchlists() {
         // Arrange - Create multiple mock users
         val users = listOf(
             Triple("testuser6", "user6@example.com", "User Six"),
@@ -387,7 +387,7 @@ class StockDashboardOAuth2UserServiceTest {
             val mockRequest = createMockOidcUserRequest(userName, email, fullName)
             val mockOidcUser = createMockOidcUser(userName, email, fullName)
 
-            whenever(oidcUserService.loadUser(any())).thenReturn(mockOidcUser)
+            doReturn(mockOidcUser).whenever(oidcUserService).loadUser(mockRequest)
 
             stockDashboardOAuth2UserService.loadUser(mockRequest)
         }
@@ -400,8 +400,7 @@ class StockDashboardOAuth2UserServiceTest {
 
         // Assert - Each user should have their watchlist
         users.forEach { (userName, _, _) ->
-            val user = userRepository.findById(userName)
-            assertNotNull(user,  "User $userName should be found" )
+            val user = requireNotNull(userRepository.findById(userName).orElse(null)) { "User $userName should be found" }
 
             val userWatchlists = watchListRepository.findAll().filter { it.createdBy!!.id == userName }
             assertEquals(1, userWatchlists.size,  "User $userName should have exactly one watchlist" )

@@ -7,11 +7,6 @@ import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.User
 class UserFactoryImpl(private val watchListFactory: WatchListFactory) : UserFactory {
     override fun createUser(name: String, username: String, email: String): User {
         val user = User(id = username, email = email, fullName = name)
-        val watchList = watchListFactory.createEmptyUserWatchList(
-            watchListName = "My watchlist",
-            watchListDescription = "My personal watchlist",
-            user = user
-        )
         return user
     }
 }

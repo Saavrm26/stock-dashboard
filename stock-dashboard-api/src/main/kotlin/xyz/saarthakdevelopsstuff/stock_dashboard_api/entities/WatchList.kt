@@ -27,9 +27,9 @@ class WatchList(
         name = "search_vector", insertable = false, updatable = false, columnDefinition = "tsvector"
     ) val searchVector: String? = null,
 
-    @Column(name = "created_at", nullable = false, updatable = false) val createdAt: Instant? = null,
+    @Column(name = "created_at", updatable = false, insertable = false) val createdAt: Instant? = null,
 
-    @Column(name = "updated_at", nullable = false) var updatedAt: Instant? = null
+    @Column(name = "updated_at", updatable = false, insertable = false) val updatedAt: Instant? = null
 )
 
 enum class WatchListVisibility { PRIVATE, PUBLIC }

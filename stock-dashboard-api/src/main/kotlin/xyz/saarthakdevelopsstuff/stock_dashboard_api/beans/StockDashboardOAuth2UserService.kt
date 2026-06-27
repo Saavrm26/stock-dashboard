@@ -51,7 +51,7 @@ class StockDashboardOAuth2UserService(
 
 
     fun getUser(userName: String): User? {
-        return userRepository.findById(userName)
+        return userRepository.findById(userName).orElse(null)
     }
 
 }
