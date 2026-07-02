@@ -26,8 +26,8 @@ class WatchListTicker(
         columnDefinition = "jsonb"
     ) val tickerDetails: TickerDetails,
 
-    @Column(name = "created_at", nullable = false, updatable = false) val createdAt: Instant? = null,
+    @Column(name = "created_at", nullable = false, updatable = false, insertable = false) val createdAt: Instant? = null,
 
-    @Column(name = "updated_at", nullable = false) var updatedAt: Instant? = null,
+    @Column(name = "updated_at", nullable = false, updatable = false, insertable = false) val updatedAt: Instant? = null,
 )
 
