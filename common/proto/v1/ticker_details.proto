@@ -160,3 +160,7 @@ message TickerDetails {
   optional string short_name = 139 [json_name = "shortName"];
   optional double trailing_peg_ratio = 140 [json_name = "trailingPegRatio"];
 }
+
+message TickerDetailsList {
+  repeated TickerDetails tickers = 1 [json_name = "tickers"];
+}
