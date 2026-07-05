@@ -16,9 +16,9 @@ Three services sharing protobuf schemas in `common/proto/v1/`:
 
 ### API (`stock-dashboard-api/`)
 ```sh
-./gradlew build          # full build (compile + test + bootJar)
-./gradlew test           # JUnit 5 with TestContainers (PostgreSQL 17)
-./gradlew bootRun        # run locally (requires DB_URL/DB_USER env)
+gradle build            # full build (compile + test + bootJar) (use `gradle`, not `./gradlew`)
+gradle test             # JUnit 5 with TestContainers (PostgreSQL 17)
+gradle bootRun          # run locally (requires DB_URL/DB_USER env)
 ```
 Profiles: `local` (dev overrides), `prd` (production). Default profile loads `application.yaml`.
 

@@ -5,7 +5,7 @@
 ## Commands
 
 ```sh
-gradle build       # compile + test + bootJar
+gradle build       # compile + test + bootJar (use `gradle`, not `./gradlew`)
 gradle test        # JUnit 5 with TestContainers (PostgreSQL 17)
 gradle bootRun     # requires DB_URL + DB_USER env vars; profile=local by default
 ```

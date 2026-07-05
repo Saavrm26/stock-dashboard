@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.WatchList
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.WatchListResponse
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.service.WatchListServiceV1
 
 @RestController
@@ -27,9 +27,8 @@ class WatchListApiController (
         logger.info("Creating watchlist for $sub")
     }
 
-    // TODO: change this to a DTO
     @GetMapping("/{id}")
-    fun getWatchList(@PathVariable("id") id: Long) : WatchList {
+    fun getWatchList(@PathVariable("id") id: Long) : WatchListResponse {
         logger.info("Getting watchlist for $id")
         return  watchListServiceV1.getWatchList(id)
     }

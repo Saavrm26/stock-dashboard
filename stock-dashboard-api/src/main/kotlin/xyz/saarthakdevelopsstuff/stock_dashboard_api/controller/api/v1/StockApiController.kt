@@ -19,18 +19,6 @@ class StockApiController(
 ) {
     private val logger = LoggerFactory.getLogger(StockApiController::class.java)
 
-    @GetMapping
-    fun getAllTickers(): ResponseEntity<List<Ticker>> {
-        val tickers = stockServiceV1.getAllTickers()
-        return ResponseEntity<List<Ticker>>(tickers, HttpStatus.OK)
-    }
-
-    @PostMapping
-    fun addTicker(@RequestBody createTickerRequest: CreateTickerRequest): ResponseEntity<Ticker> {
-        val ticker = stockServiceV1.addTicker(createTickerRequest)
-        return ResponseEntity<Ticker>(ticker, HttpStatus.CREATED)
-    }
-
     @GetMapping("/ticker-details", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getTickerDetails(@RequestParam query: String): ResponseEntity<TickerDetailsOuterClass.TickerDetails> {
         logger.info("Fetching ticker details for query: $query")

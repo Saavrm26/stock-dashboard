@@ -17,14 +17,6 @@ class StockServiceV1(
     private val stockClient: StockClient
 ) {
     private val logger = LoggerFactory.getLogger(StockServiceV1::class.java)
-    fun addTicker(createTickerRequest: CreateTickerRequest): Ticker {
-        val ticker = tickerMapper.createTickerRequestToTicker(createTickerRequest)
-        return tickerRepository.save(ticker)
-    }
-
-    fun getAllTickers(): List<Ticker> {
-        return tickerRepository.findAll()
-    }
 
     fun getTickerDetails(ticker: String): TickerDetails? {
         return stockClient.getTickerDetails(ticker)
@@ -33,4 +25,9 @@ class StockServiceV1(
     fun searchTickers(query: String): TickerSearchResponse? {
         return stockClient.searchTickers(query)
     }
+
+    fun getBulkTickerDetails(ticker: List<String>): List<TickerDetails> {
+        return listOf()
+    }
+
 }

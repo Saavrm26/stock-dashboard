@@ -1,5 +1,7 @@
 package xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.clients
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.protobuf.util.JsonFormat
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpRequest
 import org.springframework.http.HttpStatus
@@ -61,6 +63,22 @@ class StockClient(restClientBuilder: RestClient.Builder, stockClientProperties: 
         return restClient.get().uri {
             it.path("/api/v1/stocks/search").queryParam("query", query).build()
         }.retrieve().body<TickerSearchResponse>()
+    }
+
+    fun getBulkTickerDetails(tickers: List<String>): List<TickerDetails>? {
+        val jsonResponse = restClient.post()
+            .uri { it.path("/api/v1/stocks/bluk/ticker-details").build() }
+            .body(tickers)
+            .retrieve()
+            .body(String::class.java) ?: return null
+
+        val parser = JsonFormat.parser()
+        val jsonArray = ObjectMapper().readTree(jsonResponse)
+        return jsonArray.map { node ->
+            val builder = TickerDetails.newBuilder()
+            parser.merge(node.toString(), builder)
+            builder.build()
+        }
     }
 
 }
