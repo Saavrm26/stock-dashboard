@@ -15,3 +15,8 @@ class StocksService:
         search = yf.Search(query, news_count=0, lists_count=0, enable_fuzzy_query=True)
         ticker_search = ParseDict(search.all, TickerSearchResponse(), ignore_unknown_fields=True)
         return ticker_search
+
+    def bulk_get_ticker_details(self, tickers: list[str]) -> list[TickerDetails]:
+        tickers_str = " ".join(tickers)
+        multi = yf.Tickers(tickers_str)
+        return [from_yfinance(multi.tickers[t.upper()].info) for t in tickers]
