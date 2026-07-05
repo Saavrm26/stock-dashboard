@@ -32,4 +32,11 @@ class StockApiController(
         val searchResponse = stockServiceV1.searchTickers(query)
         return ResponseEntity<TickerSearch.TickerSearchResponse>(searchResponse, HttpStatus.OK)
     }
+
+    @PostMapping("/ticker-details/bulk", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getBulkTickerDetails(@RequestBody tickers: List<String>): ResponseEntity<TickerDetailsOuterClass.TickerDetailsList> {
+        logger.info("Fetching ticker details for query: $tickers")
+        val tickersResponse = stockServiceV1.getBulkTickerDetails(tickers)
+        return ResponseEntity<TickerDetailsOuterClass.TickerDetailsList>(tickersResponse, HttpStatus.OK)
+    }
 }

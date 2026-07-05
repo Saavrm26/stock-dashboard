@@ -2,13 +2,12 @@ package xyz.saarthakdevelopsstuff.stock_dashboard_api.service
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.TickerDetailsOuterClass.TickerDetailsList
 import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.TickerDetailsOuterClass.TickerDetails
 import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.TickerSearch.TickerSearchResponse
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.clients.StockClient
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.mappers.TickerMapper
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.TickerRepository
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.Ticker
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.CreateTickerRequest
 
 @Service
 class StockServiceV1(
@@ -26,8 +25,8 @@ class StockServiceV1(
         return stockClient.searchTickers(query)
     }
 
-    fun getBulkTickerDetails(ticker: List<String>): List<TickerDetails> {
-        return listOf()
+    fun getBulkTickerDetails(tickers: List<String>): TickerDetailsList {
+        return stockClient.getBulkTickerDetails(tickers)
     }
 
 }

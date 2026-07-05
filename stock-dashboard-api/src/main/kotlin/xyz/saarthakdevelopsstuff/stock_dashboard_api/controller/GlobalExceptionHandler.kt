@@ -32,12 +32,17 @@ class GlobalExceptionHandler {
                 error = "RUNTIME_EXCEPTION",
                 message = e.description
             )
+            StockClientErrorCode.DOWNSTREAM_FAILURE -> ErrorResponse(
+                error = "DOWNSTREAM_FAILURE",
+                message = e.description
+            )
         }
 
         val status = when (e.errorCode) {
             StockClientErrorCode.NOT_FOUND -> HttpStatus.NOT_FOUND
             StockClientErrorCode.BAD_REQUEST -> HttpStatus.BAD_REQUEST
             StockClientErrorCode.RUNTIME_EXCEPTION -> HttpStatus.INTERNAL_SERVER_ERROR
+            StockClientErrorCode.DOWNSTREAM_FAILURE -> HttpStatus.INTERNAL_SERVER_ERROR
         }
 
         return ResponseEntity<ErrorResponse>(errorResponse, status)

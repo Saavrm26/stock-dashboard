@@ -1,7 +1,5 @@
 package xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.clients
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.protobuf.util.JsonFormat
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpRequest
 import org.springframework.http.HttpStatus
@@ -11,6 +9,7 @@ import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.body
+import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.TickerDetailsOuterClass.TickerDetailsList
 import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.TickerDetailsOuterClass.TickerDetails
 import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.TickerSearch.TickerSearchResponse
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.properties.StockClientProperties
@@ -65,20 +64,18 @@ class StockClient(restClientBuilder: RestClient.Builder, stockClientProperties: 
         }.retrieve().body<TickerSearchResponse>()
     }
 
-    fun getBulkTickerDetails(tickers: List<String>): List<TickerDetails>? {
-        val jsonResponse = restClient.post()
+    fun getBulkTickerDetails(tickers: List<String>): TickerDetailsList {
+        val tickers = restClient.post()
             .uri { it.path("/api/v1/stocks/bluk/ticker-details").build() }
             .body(tickers)
             .retrieve()
-            .body(String::class.java) ?: return null
+            .body<TickerDetailsList>() ?: throw StockClientException(
+            StockClientErrorCode.DOWNSTREAM_FAILURE, """
+                Downstream api response is malformed.
+            """.trimIndent()
+            )
 
-        val parser = JsonFormat.parser()
-        val jsonArray = ObjectMapper().readTree(jsonResponse)
-        return jsonArray.map { node ->
-            val builder = TickerDetails.newBuilder()
-            parser.merge(node.toString(), builder)
-            builder.build()
-        }
+        return tickers
     }
 
 }
