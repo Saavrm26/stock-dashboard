@@ -2,13 +2,12 @@ from typing import List
 
 from google.protobuf.json_format import MessageToDict
 from fastapi import APIRouter
-import logging
+
 from app.services.stocks_service import StocksService
 
 router = APIRouter(prefix="/api/v1/stocks", tags=["stocks"])
 stocks_service = StocksService()
 
-logger = logging.getLogger(__name__)
 
 @router.get("/ticker-details")
 def get_stock_details(query: str):
@@ -22,8 +21,7 @@ def search_stocks(query: str):
     return MessageToDict(ticker_search)
 
 
-@router.post("/bluk/ticker-details")
+@router.get("/bluk/ticker-details/")
 def bulk_get_stock_details(tickers: List[str]):
-    logger.info(f"Fetching ticker details for {tickers}")
     details = stocks_service.bulk_get_ticker_details(tickers)
-    return MessageToDict(details)
+    return [MessageToDict(d) for d in details]
