@@ -7,11 +7,11 @@ import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.WatchListVisibilit
 
 @Component
 class WatchListFactoryImpl : WatchListFactory {
-    override fun createEmptyUserWatchList(watchListName: String, watchListDescription: String, user: User): WatchList {
+    override fun createEmptyUserWatchList(watchListName: String, watchListDescription: String, user: User, visibility: WatchListVisibility): WatchList {
         return WatchList(
             name = watchListName,
             description = watchListDescription,
-            visibility = WatchListVisibility.PRIVATE,
+            visibility = visibility,
             createdBy = user
         )
     }

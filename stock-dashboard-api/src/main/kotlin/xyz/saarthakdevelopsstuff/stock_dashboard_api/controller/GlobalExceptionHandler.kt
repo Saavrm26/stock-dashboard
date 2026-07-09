@@ -4,10 +4,13 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.exceptions.StockClientErrorCode
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.exceptions.StockClientException
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.exceptions.WatchListException
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.exceptions.WatchListExceptionErrorCode
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.ErrorResponse
 
 @ControllerAdvice
@@ -38,6 +41,8 @@ class GlobalExceptionHandler {
             )
         }
 
+
+
         val status = when (e.errorCode) {
             StockClientErrorCode.NOT_FOUND -> HttpStatus.NOT_FOUND
             StockClientErrorCode.BAD_REQUEST -> HttpStatus.BAD_REQUEST
@@ -47,6 +52,45 @@ class GlobalExceptionHandler {
 
         return ResponseEntity<ErrorResponse>(errorResponse, status)
 
+    }
+
+    @ExceptionHandler(WatchListException::class)
+    fun handleWatchListException(e: WatchListException): ResponseEntity<ErrorResponse> {
+        logger.error("WatchListException occurred", e)
+        val errorResponse = when (e.errorCode) {
+            WatchListExceptionErrorCode.NOT_FOUND -> ErrorResponse(
+                error = "NOT_FOUND",
+                message = e.description
+            )
+            WatchListExceptionErrorCode.UNAUTHORIZED -> ErrorResponse(
+                error = "UNAUTHORIZED",
+                message = e.description
+            )
+            WatchListExceptionErrorCode.USER_NOT_FOUND -> ErrorResponse(
+                error = "USER_NOT_FOUND",
+                message = e.description
+            )
+        }
+
+        val status = when (e.errorCode) {
+            WatchListExceptionErrorCode.NOT_FOUND -> HttpStatus.NOT_FOUND
+            WatchListExceptionErrorCode.UNAUTHORIZED -> HttpStatus.FORBIDDEN
+            WatchListExceptionErrorCode.USER_NOT_FOUND -> HttpStatus.NOT_FOUND
+        }
+
+        return ResponseEntity(errorResponse, status)
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleValidationExceptions(e: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
+        logger.error("Validation failed", e)
+        val message = e.bindingResult.fieldErrors.joinToString("; ") {
+            "${it.field}: ${it.defaultMessage}"
+        }
+        return ResponseEntity(
+            ErrorResponse(error = "BAD_REQUEST", message = message),
+            HttpStatus.BAD_REQUEST
+        )
     }
 
     @ExceptionHandler(Exception::class)

@@ -9,7 +9,7 @@ data class TickerDetails(
     var marketCap: Long?,
     // The mutable map object itself doesn't change so it can be made val
     @get:JsonAnyGetter
-    val additionalDetails: MutableMap<String, Any?>,
+    val additionalDetails: MutableMap<String, Any?> = mutableMapOf(),
 ) {
     @JsonAnySetter
     fun setAdditionalDetails(key: String, value: Any?) {

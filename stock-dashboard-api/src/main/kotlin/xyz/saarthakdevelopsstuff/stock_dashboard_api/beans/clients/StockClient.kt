@@ -66,7 +66,7 @@ class StockClient(restClientBuilder: RestClient.Builder, stockClientProperties: 
 
     fun getBulkTickerDetails(tickers: List<String>): TickerDetailsList {
         val tickers = restClient.post()
-            .uri { it.path("/api/v1/stocks/bluk/ticker-details").build() }
+            .uri { it.path("/api/v1/stocks/bulk/ticker-details").build() }
             .body(tickers)
             .retrieve()
             .body<TickerDetailsList>() ?: throw StockClientException(
@@ -74,7 +74,6 @@ class StockClient(restClientBuilder: RestClient.Builder, stockClientProperties: 
                 Downstream api response is malformed.
             """.trimIndent()
             )
-
         return tickers
     }
 
