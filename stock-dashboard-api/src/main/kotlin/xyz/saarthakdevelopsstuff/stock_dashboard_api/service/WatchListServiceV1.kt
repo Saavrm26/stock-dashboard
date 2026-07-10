@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.clients.StockClient
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.factories.WatchListFactory
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.mappers.WatchListMapper
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.CachedWatchListRepository
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.UserRepository
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.WatchListRepository
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.WatchListTickerRepository
@@ -24,11 +25,16 @@ class WatchListServiceV1(
     private val watchListMapper: WatchListMapper,
     private val userRepository: UserRepository,
     private val watchListFactory: WatchListFactory,
-    private val stockClient: StockClient
+    private val stockClient: StockClient,
+    private val watchListTxService: WatchListTxService,
+    private val watchListCacheService: WatchListCacheService
 ) {
     @Transactional
-    fun createWatchList(username: String, watchListRequest: WatchListRequest) : WatchListResponse {
-        val user = userRepository.findByIdOrNull(username) ?: throw WatchListException(WatchListExceptionErrorCode.USER_NOT_FOUND, "The user creating watchlist couldn't be found. ")
+    fun createWatchList(username: String, watchListRequest: WatchListRequest): WatchListResponse {
+        val user = userRepository.findByIdOrNull(username) ?: throw WatchListException(
+            WatchListExceptionErrorCode.USER_NOT_FOUND,
+            "The user creating watchlist couldn't be found. "
+        )
         val watchList = watchListFactory.createEmptyUserWatchList(
             watchListName = watchListRequest.name,
             watchListDescription = watchListRequest.description,
@@ -62,14 +68,21 @@ class WatchListServiceV1(
             WatchListExceptionErrorCode.NOT_FOUND,
             "Watch List not found!"
         )
-        if (createdByUsername  != username) {
+        if (createdByUsername != username) {
             throw WatchListException(WatchListExceptionErrorCode.UNAUTHORIZED, "Not authorized for this action")
         }
     }
 
-    fun getWatchList(id: Long, getWatchListRequest: GetWatchListRequest) : WatchListResponse {
-        val watchList = watchListRepository.findByIdOrNull(id)
-            ?: throw WatchListException(WatchListExceptionErrorCode.NOT_FOUND, "This watch list doesn't exists")
+    fun getWatchList(id: Long, getWatchListRequest: GetWatchListRequest): WatchListResponse {
+        // check cache, use fallback, if fallback not present throw else save in cache
+        var watchList = watchListCacheService.findByIdOrNull(id)
+        if (watchList == null) {
+            watchList = watchListTxService.findByIdOrNull(id) ?: throw WatchListException(
+                WatchListExceptionErrorCode.NOT_FOUND,
+                "This watch list doesn't exists"
+            )
+            watchListCacheService.saveWatchList(watchList)
+        }
 
         val watchListTickers = watchListTickerRepository.findTickersByWatchListId(id)
 

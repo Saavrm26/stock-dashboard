@@ -172,7 +172,10 @@ def from_yfinance(info: dict) -> TickerDetails:
 
 def _map_officers(pb: TickerDetails, info: dict) -> None:
     """Map companyOfficers and executiveTeam from yfinance to protobuf Officer messages."""
-    for key, pb_attr in [("companyOfficers", "company_officers"), ("executiveTeam", "executive_team")]:
+    for key, pb_attr in [
+        ("companyOfficers", "company_officers"),
+        ("executiveTeam", "executive_team"),
+    ]:
         officers = info.get(key)
         if not isinstance(officers, list):
             continue

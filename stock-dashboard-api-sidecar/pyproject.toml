@@ -12,3 +12,8 @@ dependencies = [
     "yfinance>=1.2.0",
 ]
 
+[dependency-groups]
+dev = [
+    "ruff>=0.15.21",
+]
+

@@ -1,0 +1,26 @@
+syntax = "proto3";
+package xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1;
+
+import "google/protobuf/timestamp.proto";
+
+enum WatchListVisibility {
+  PRIVATE = 0;
+  PUBLIC = 1;
+}
+
+enum WatchListType {
+  FIXED = 0;
+  DYNAMIC = 1;
+}
+
+message WatchList {
+  int64 id = 1 [json_name = "id"];
+  string name = 2 [json_name = "name"];
+  string description = 3 [json_name = "description"];
+  optional string created_by = 4 [json_name = "createdBy"];
+  WatchListVisibility visibility = 5 [json_name = "visibility"];
+  WatchListType type = 6 [json_name = "type"];
+  optional string screen_query = 7 [json_name = "screenQuery"];
+  optional google.protobuf.Timestamp created_at = 8 [json_name = "createdAt"];
+  optional google.protobuf.Timestamp updated_at = 9 [json_name = "updatedAt"];
+}

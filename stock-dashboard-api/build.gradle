@@ -78,6 +78,7 @@ sourceSets {
     main {
         proto {
             srcDir "../common/proto/v1"
+			srcDir "src"
         }
     }
     java {}
