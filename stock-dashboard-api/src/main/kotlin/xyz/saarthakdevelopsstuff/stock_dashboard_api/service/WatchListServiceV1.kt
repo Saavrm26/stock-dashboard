@@ -3,15 +3,17 @@ package xyz.saarthakdevelopsstuff.stock_dashboard_api.service
 import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.TickerDetailsOuterClass.TickerDetails as ProtoTickerDetails
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.clients.StockClient
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.factories.WatchListFactory
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.mappers.WatchListMapper
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.CachedWatchListRepository
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.TickerRepository
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.UserRepository
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.WatchListRepository
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.WatchListTickerRepository
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.WatchListTicker
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.Ticker
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.models.TickerDetails
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.exceptions.StockClientErrorCode
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.exceptions.StockClientException
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.exceptions.WatchListException
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.exceptions.WatchListExceptionErrorCode
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.GetWatchListRequest
@@ -24,42 +26,57 @@ class WatchListServiceV1(
     private val watchListTickerRepository: WatchListTickerRepository,
     private val watchListMapper: WatchListMapper,
     private val userRepository: UserRepository,
-    private val watchListFactory: WatchListFactory,
     private val stockClient: StockClient,
     private val watchListTxService: WatchListTxService,
-    private val watchListCacheService: WatchListCacheService
+    private val watchListCacheService: WatchListCacheService,
+    private val tickerRepository: TickerRepository
 ) {
-    @Transactional
     fun createWatchList(username: String, watchListRequest: WatchListRequest): WatchListResponse {
         val user = userRepository.findByIdOrNull(username) ?: throw WatchListException(
             WatchListExceptionErrorCode.USER_NOT_FOUND,
             "The user creating watchlist couldn't be found. "
         )
-        val watchList = watchListFactory.createEmptyUserWatchList(
-            watchListName = watchListRequest.name,
-            watchListDescription = watchListRequest.description,
-            user = user,
-            visibility = watchListRequest.visibility
-        )
-        val savedWatchList = watchListRepository.save(watchList)
 
-        watchListRequest.tickers.forEach { tickerRequest ->
-            val ticker = WatchListTicker(
-                watchList = savedWatchList,
-                tickerCode = tickerRequest.tickerCode,
-                tickerLongName = "",
-                tickerExchange = tickerRequest.tickerExchange,
-                tickerDetails = TickerDetails(
-                    symbol = tickerRequest.tickerCode,
-                    sector = null,
-                    marketCap = null,
-                    additionalDetails = mutableMapOf()
+        val requestedByCode = watchListRequest.tickers.associateBy { it.tickerCode }
+        val existingCodes = tickerRepository.findAllById(requestedByCode.keys)
+            .map { it.tickerCode }
+            .toSet()
+
+        val missingRequests = requestedByCode
+            .filterKeys { it !in existingCodes }
+            .values
+            .toList()
+
+        val missingTickers = if (missingRequests.isEmpty()) {
+            emptyList()
+        } else {
+            val details = stockClient.getBulkTickerDetails(missingRequests.map { it.tickerCode })
+            val detailsByCode = details.tickersList.associateBy { it.symbol }
+            val unresolved = missingRequests.map { it.tickerCode }.filter { it !in detailsByCode }
+
+            if (unresolved.isNotEmpty()) {
+                throw StockClientException(
+                    StockClientErrorCode.DOWNSTREAM_FAILURE,
+                    "Ticker details were not returned for: ${unresolved.joinToString()}"
                 )
-            )
-            watchListTickerRepository.save(ticker)
+            }
+
+            missingRequests.map { request ->
+                val response = detailsByCode.getValue(request.tickerCode)
+                Ticker(
+                    tickerCode = response.symbol,
+                    tickerLongName = if (response.hasShortName()) response.shortName else response.symbol,
+                    tickerExchange = if (response.hasExchange()) response.exchange else request.tickerExchange,
+                    tickerDetails = TickerDetails(
+                        symbol = response.symbol,
+                        sector = if (response.hasSector()) response.sector else null,
+                        marketCap = if (response.hasMarketCap()) response.marketCap else null,
+                    )
+                )
+            }
         }
 
-        return watchListMapper.toWatchListResponse(savedWatchList)
+        return watchListTxService.createWatchList(user, watchListRequest, missingTickers)
     }
 
     @Transactional

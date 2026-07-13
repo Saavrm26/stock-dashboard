@@ -7,6 +7,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.TestContainersConfiguration
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.TickerRepository
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.Ticker
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.WatchList
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.WatchListTicker
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.WatchListType
@@ -25,8 +27,29 @@ class WatchListTickerRepositoryTest {
     @Autowired
     lateinit var watchListTickerRepository: WatchListTickerRepository
 
+    @Autowired
+    lateinit var tickerRepository: TickerRepository
+
     @Test
     fun `findTickersByWatchListId returns tickers for watchlist`() {
+        val apple = tickerRepository.save(
+            Ticker(
+                tickerCode = "AAPL",
+                tickerLongName = "Apple Inc.",
+                tickerExchange = "NASDAQ",
+                tickerDetails = TickerDetails("AAPL", "Technology", 3_000_000_000_000L)
+            )
+        )
+
+        val google = tickerRepository.save(
+            Ticker(
+                tickerCode = "GOOGL",
+                tickerLongName = "Alphabet Inc.",
+                tickerExchange = "NASDAQ",
+                tickerDetails = TickerDetails("GOOGL", "Technology", 2_000_000_000_000L)
+            )
+        )
+
         val watchList = WatchList(
             id = null,
             name = "Test WatchList",
@@ -40,26 +63,8 @@ class WatchListTickerRepositoryTest {
         )
         val savedWatchList = watchListRepository.save(watchList)
 
-        val ticker1 = WatchListTicker(
-            id = null,
-            watchList = savedWatchList,
-            tickerCode = "AAPL",
-            tickerLongName = "Apple Inc.",
-            tickerExchange = "NASDAQ",
-            tickerDetails = TickerDetails(symbol = "AAPL", sector = "Technology", marketCap = 3000000000000L),
-            createdAt = Instant.now(),
-            updatedAt = Instant.now()
-        )
-        val ticker2 = WatchListTicker(
-            id = null,
-            watchList = savedWatchList,
-            tickerCode = "GOOGL",
-            tickerLongName = "Alphabet Inc.",
-            tickerExchange = "NASDAQ",
-            tickerDetails = TickerDetails(symbol = "GOOGL", sector = "Technology", marketCap = 2000000000000L),
-            createdAt = Instant.now(),
-            updatedAt = Instant.now()
-        )
+        val ticker1 = WatchListTicker(watchList = savedWatchList, tickerCode = apple.tickerCode)
+        val ticker2 = WatchListTicker(watchList = savedWatchList, tickerCode = google.tickerCode)
         watchListTickerRepository.saveAll(listOf(ticker1, ticker2))
 
         val result = watchListTickerRepository.findTickersByWatchListId(savedWatchList.id!!)
