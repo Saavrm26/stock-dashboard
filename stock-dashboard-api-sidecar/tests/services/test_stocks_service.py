@@ -3,7 +3,7 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 from app.services.stocks_service import StocksService
-from app.models.generated.ticker_details_pb2 import TickerDetails
+from app.models.generated.ticker_details_pb2 import TickerDetails, TickerDetailsList
 
 
 @pytest.fixture
@@ -43,9 +43,9 @@ async def test_bulk_get_ticker_details_cache_miss_all(stocks_service, mock_redis
     with patch("app.services.stocks_service.asyncio.to_thread", return_value=mock_multi):
         result = await stocks_service.bulk_get_ticker_details(tickers)
 
-    assert len(result) == 2
-    assert result[0].symbol == "AAPL"
-    assert result[1].symbol == "GOOGL"
+    assert len(result.tickers) == 2
+    assert result.tickers[0].symbol == "AAPL"
+    assert result.tickers[1].symbol == "GOOGL"
 
     # Verify MGET called with correct keys
     mock_redis.mget.assert_called_once_with(
@@ -87,9 +87,9 @@ async def test_bulk_get_ticker_details_cache_hit_all(stocks_service, mock_redis)
         # yfinance should NOT be called
         mock_to_thread.assert_not_called()
 
-    assert len(result) == 2
-    assert result[0].symbol == "AAPL"
-    assert result[1].symbol == "GOOGL"
+    assert len(result.tickers) == 2
+    assert result.tickers[0].symbol == "AAPL"
+    assert result.tickers[1].symbol == "GOOGL"
 
     mock_redis.mget.assert_called_once_with(
         "sidecar:ticker:AAPL", "sidecar:ticker:GOOGL"
@@ -125,10 +125,10 @@ async def test_bulk_get_ticker_details_cache_partial_hit(stocks_service, mock_re
     with patch("app.services.stocks_service.asyncio.to_thread", return_value=mock_multi):
         result = await stocks_service.bulk_get_ticker_details(tickers)
 
-    assert len(result) == 3
-    assert result[0].symbol == "AAPL"
-    assert result[1].symbol == "GOOGL"
-    assert result[2].symbol == "MSFT"
+    assert len(result.tickers) == 3
+    assert result.tickers[0].symbol == "AAPL"
+    assert result.tickers[1].symbol == "GOOGL"
+    assert result.tickers[2].symbol == "MSFT"
 
     # MSET should only be called for GOOGL and MSFT
     mock_redis.mset.assert_called_once()
@@ -147,9 +147,10 @@ async def test_bulk_get_ticker_details_cache_partial_hit(stocks_service, mock_re
 
 @pytest.mark.asyncio
 async def test_bulk_get_ticker_details_empty_list(stocks_service, mock_redis):
-    """Empty ticker list returns empty list, no Redis calls."""
+    """Empty ticker list returns empty TickerDetailsList, no Redis calls."""
     result = await stocks_service.bulk_get_ticker_details([])
-    assert result == []
+    assert isinstance(result, TickerDetailsList)
+    assert result.tickers == []
     mock_redis.mget.assert_not_called()
     mock_redis.mset.assert_not_called()
     mock_redis.expire.assert_not_called()
@@ -174,7 +175,7 @@ async def test_bulk_get_ticker_details_preserves_order(stocks_service, mock_redi
     with patch("app.services.stocks_service.asyncio.to_thread", return_value=mock_multi):
         result = await stocks_service.bulk_get_ticker_details(tickers)
 
-    assert [r.symbol for r in result] == ["GOOGL", "AAPL", "MSFT"]
+    assert [r.symbol for r in result.tickers] == ["GOOGL", "AAPL", "MSFT"]
 
 
 @pytest.mark.asyncio
@@ -190,8 +191,8 @@ async def test_bulk_get_ticker_details_deduplicates(stocks_service, mock_redis):
     with patch("app.services.stocks_service.asyncio.to_thread") as mock_to_thread:
         result = await stocks_service.bulk_get_ticker_details(tickers)
 
-    assert len(result) == 3
-    assert result[0].symbol == "AAPL"
-    assert result[1].symbol == "AAPL"
-    assert result[2].symbol == "GOOGL"
+    assert len(result.tickers) == 3
+    assert result.tickers[0].symbol == "AAPL"
+    assert result.tickers[1].symbol == "AAPL"
+    assert result.tickers[2].symbol == "GOOGL"
     mock_to_thread.assert_not_called()

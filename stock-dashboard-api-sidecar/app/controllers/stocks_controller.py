@@ -21,7 +21,7 @@ async def search_stocks(query: str):
     return MessageToDict(ticker_search)
 
 
-@router.post("/bulk/ticker-details/")
+@router.post("/bulk/ticker-details")
 async def bulk_get_stock_details(tickers: List[str]):
     details = await stocks_service.bulk_get_ticker_details(tickers)
-    return [MessageToDict(d) for d in details]
+    return MessageToDict(details)
