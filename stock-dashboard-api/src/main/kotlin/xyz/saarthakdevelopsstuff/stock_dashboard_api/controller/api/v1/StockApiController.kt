@@ -7,8 +7,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.TickerDetailsOuterClass
 import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.TickerSearch
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.Ticker
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.CreateTickerRequest
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.service.StockServiceV1
 
 // This would a admin only controller

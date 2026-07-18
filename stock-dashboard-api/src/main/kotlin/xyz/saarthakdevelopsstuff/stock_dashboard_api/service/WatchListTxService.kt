@@ -29,7 +29,7 @@ class WatchListTxService(
         request: WatchListRequest,
         missingTickers: List<Ticker>
     ): WatchListResponse {
-        tickerRepository.saveAll(missingTickers)
+        val savedTickers = tickerRepository.saveAll(missingTickers)
 
         val watchList = watchListFactory.createEmptyUserWatchList(
             watchListName = request.name,
@@ -47,8 +47,11 @@ class WatchListTxService(
                 )
             }
         )
+        val tickerCodes = request.tickers.map { it.tickerCode }.toSet()
+        val allTickers = tickerRepository.findAllById(tickerCodes)
 
-        return watchListMapper.toWatchListResponse(savedWatchList)
+
+        return watchListMapper.toWatchListResponse(savedWatchList, tickers = allTickers)
     }
 
     @Transactional

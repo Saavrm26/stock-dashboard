@@ -5,6 +5,7 @@ import org.mapstruct.Condition
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 import org.mapstruct.NullValueCheckStrategy
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.Ticker
 import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.WatchListOuterClass.WatchList as WatchListProto
 import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.WatchListOuterClass.WatchListType as ProtoWatchListType
 import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.WatchListOuterClass.WatchListVisibility as ProtoWatchListVisibility
@@ -13,11 +14,11 @@ import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.WatchListType
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.WatchListVisibility
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.WatchListResponse
 
-@Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
+@Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS, uses = [TickerMapper::class])
 interface WatchListMapper {
 
     @Mapping(target = "createdBy", source = "watchList.createdBy.id")
-    fun toWatchListResponse(watchList: WatchList): WatchListResponse
+    fun toWatchListResponse(watchList: WatchList, tickers: List<Ticker>): WatchListResponse
 
     @Mapping(target = "createdBy", source = "watchList.createdBy.id")
     fun toWatchListProto(watchList: WatchList?): WatchListProto?

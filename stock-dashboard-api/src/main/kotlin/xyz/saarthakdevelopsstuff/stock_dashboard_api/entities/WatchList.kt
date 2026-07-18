@@ -1,6 +1,8 @@
 package xyz.saarthakdevelopsstuff.stock_dashboard_api.entities
 
 import jakarta.persistence.*
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
 import java.time.Instant
 
 @Entity
@@ -27,10 +29,14 @@ class WatchList(
         name = "search_vector", insertable = false, updatable = false, columnDefinition = "tsvector"
     ) val searchVector: String? = null,
 
-    @Column(name = "created_at", updatable = false, insertable = false) val createdAt: Instant? = null,
+) {
 
-    @Column(name = "updated_at", updatable = false, insertable = false) val updatedAt: Instant? = null
-)
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false, nullable = false) val createdAt: Instant? = null
+
+    @UpdateTimestamp
+    @Column(name = "updated_at", updatable = false, nullable = false) val updatedAt: Instant? = null
+}
 
 enum class WatchListVisibility { PRIVATE, PUBLIC }
 

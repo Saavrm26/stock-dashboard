@@ -6,7 +6,6 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.type.SqlTypes
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.models.TickerDetails
 
 @Entity
 @Table(name = "tickers")
@@ -23,5 +22,5 @@ class Ticker(
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "ticker_details", columnDefinition = "jsonb")
-    var tickerDetails: TickerDetails
+    var tickerDetails: String
 )

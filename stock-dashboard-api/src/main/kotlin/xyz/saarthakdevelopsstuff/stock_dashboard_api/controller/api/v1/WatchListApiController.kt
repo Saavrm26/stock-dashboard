@@ -1,6 +1,7 @@
 package xyz.saarthakdevelopsstuff.stock_dashboard_api.controller.api.v1
 
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -30,12 +31,12 @@ class WatchListApiController(
         @RequestBody @Validated watchListRequest: WatchListRequest,
         @AuthenticationPrincipal jwt: Jwt,
         authentication: Authentication
-    ) : WatchListResponse {
+    ) : ResponseEntity<WatchListResponse> {
         val sub = jwt.subject
         logger.info("Creating watchlist for $sub")
         val watchListResponse = watchListServiceV1.createWatchList(sub, watchListRequest)
         logger.info("Successfully created watchlist for $sub")
-        return watchListResponse
+        return ResponseEntity<WatchListResponse>(watchListResponse, HttpStatus.OK)
 
     }
 

@@ -5,6 +5,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.TickerDetailsOuterClass.TickerDetails as ProtoTickerDetails
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.clients.StockClient
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.mappers.TickerMapper
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.mappers.WatchListMapper
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.TickerRepository
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.UserRepository
@@ -29,8 +30,12 @@ class WatchListServiceV1(
     private val stockClient: StockClient,
     private val watchListTxService: WatchListTxService,
     private val watchListCacheService: WatchListCacheService,
-    private val tickerRepository: TickerRepository
+    private val tickerRepository: TickerRepository,
+    private val tickerMapper: TickerMapper
 ) {
+    // Non functional: Issues: No caching right now
+    // Functional: only missing tickers is getting persisted
+    // Database operations are spilling out of transactional service
     fun createWatchList(username: String, watchListRequest: WatchListRequest): WatchListResponse {
         val user = userRepository.findByIdOrNull(username) ?: throw WatchListException(
             WatchListExceptionErrorCode.USER_NOT_FOUND,
@@ -67,11 +72,7 @@ class WatchListServiceV1(
                     tickerCode = response.symbol,
                     tickerLongName = if (response.hasShortName()) response.shortName else response.symbol,
                     tickerExchange = if (response.hasExchange()) response.exchange else request.tickerExchange,
-                    tickerDetails = TickerDetails(
-                        symbol = response.symbol,
-                        sector = if (response.hasSector()) response.sector else null,
-                        marketCap = if (response.hasMarketCap()) response.marketCap else null,
-                    )
+                    tickerDetails = tickerMapper.mapTickerDetailsProtoToString(response)
                 )
             }
         }
