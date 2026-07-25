@@ -7,9 +7,9 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.UserDto
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.StockDashboardOAuth2UserService
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.mappers.UserMapper
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.dto.UserResponse
 
 @RestController
 @RequestMapping("v1/users")
@@ -20,9 +20,9 @@ class UserController(
     private val logger = LoggerFactory.getLogger(UserController::class.java)
 
     @GetMapping("me", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getCurrentUser(@AuthenticationPrincipal user: OidcUser): UserDto.User {
+    fun getCurrentUser(@AuthenticationPrincipal user: OidcUser): UserResponse {
         logger.info("Fetching the current user ${user.subject}")
         val user = stockDashboardOAuth2UserService.getUser(user.subject)
-        return userMapper.toUserDto(user)
+        return userMapper.toUserResponse(user)
     }
 }

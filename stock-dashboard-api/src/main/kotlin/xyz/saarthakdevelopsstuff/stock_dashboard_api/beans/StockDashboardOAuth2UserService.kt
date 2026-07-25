@@ -9,9 +9,10 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser
 import org.springframework.stereotype.Service
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.factories.UserFactory
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.factories.WatchListFactory
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.mappers.UserMapper
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.UserRepository
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.WatchListRepository
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.User
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.service.User
 
 @Service
 class StockDashboardOAuth2UserService(
@@ -19,7 +20,8 @@ class StockDashboardOAuth2UserService(
     private val userRepository: UserRepository,
     private val userFactory: UserFactory,
     private val watchListFactory: WatchListFactory,
-    private val watchListRepository: WatchListRepository
+    private val watchListRepository: WatchListRepository,
+    private val userMapper: UserMapper
 ) : OAuth2UserService<OidcUserRequest, OidcUser> {
 
     private val logger = LoggerFactory.getLogger(StockDashboardOAuth2UserService::class.java)
@@ -51,7 +53,7 @@ class StockDashboardOAuth2UserService(
 
 
     fun getUser(userName: String): User? {
-        return userRepository.findById(userName).orElse(null)
+        return userMapper.toUserServiceModel(userRepository.findById(userName).orElse(null))
     }
 
 }

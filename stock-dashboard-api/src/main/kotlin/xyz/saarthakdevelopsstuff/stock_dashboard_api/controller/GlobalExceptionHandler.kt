@@ -11,7 +11,7 @@ import xyz.saarthakdevelopsstuff.stock_dashboard_api.exceptions.StockClientError
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.exceptions.StockClientException
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.exceptions.WatchListException
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.exceptions.WatchListExceptionErrorCode
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.ErrorResponse
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.dto.ErrorResponse
 
 @ControllerAdvice
 class GlobalExceptionHandler {
@@ -70,12 +70,17 @@ class GlobalExceptionHandler {
                 error = "USER_NOT_FOUND",
                 message = e.description
             )
+            WatchListExceptionErrorCode.BAD_ACTION -> ErrorResponse(
+                error = "BAD_ACTION",
+                message = e.description
+            )
         }
 
         val status = when (e.errorCode) {
             WatchListExceptionErrorCode.NOT_FOUND -> HttpStatus.NOT_FOUND
             WatchListExceptionErrorCode.UNAUTHORIZED -> HttpStatus.FORBIDDEN
             WatchListExceptionErrorCode.USER_NOT_FOUND -> HttpStatus.NOT_FOUND
+            WatchListExceptionErrorCode.BAD_ACTION -> HttpStatus.BAD_REQUEST
         }
 
         return ResponseEntity(errorResponse, status)

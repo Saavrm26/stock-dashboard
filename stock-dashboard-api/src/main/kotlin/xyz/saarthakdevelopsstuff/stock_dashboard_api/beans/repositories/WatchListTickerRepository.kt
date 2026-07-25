@@ -2,7 +2,7 @@ package xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories
 
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.WatchListTicker
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchListTicker
 
 interface WatchListTickerRepository : JpaRepository<WatchListTicker, Long> {
 

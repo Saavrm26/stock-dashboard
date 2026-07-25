@@ -4,6 +4,7 @@ enum class WatchListExceptionErrorCode(val code: String) {
     NOT_FOUND("WATCHLIST_NOT_FOUND"),
     UNAUTHORIZED("WATCHLIST_ACTION_UNAUTHORIZED"),
     USER_NOT_FOUND("WATCHLIST_USER_NOT_FOUND"),
+    BAD_ACTION("WATCHLIST_BAD_ACTION"),
 }
 
 class WatchListException(val errorCode: WatchListExceptionErrorCode, val description : String) : Exception("Code: ${errorCode.code} | Message: $description")

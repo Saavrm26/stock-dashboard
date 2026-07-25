@@ -3,17 +3,16 @@ package xyz.saarthakdevelopsstuff.stock_dashboard_api.service
 import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.WatchListOuterClass
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.factories.WatchListFactory
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.mappers.WatchListMapper
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.TickerRepository
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.WatchListRepository
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.WatchListTickerRepository
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.Ticker
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.User
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.WatchListTicker
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.WatchListRequest
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.WatchListResponse
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.Ticker
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.User
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchListTicker
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.dto.WatchListRequest
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.service.WatchList
 
 @Service
 class WatchListTxService(
@@ -27,9 +26,9 @@ class WatchListTxService(
     fun createWatchList(
         user: User,
         request: WatchListRequest,
-        missingTickers: List<Ticker>
-    ): WatchListResponse {
-        val savedTickers = tickerRepository.saveAll(missingTickers)
+        tickers: List<Ticker>
+    ): WatchList {
+        val savedTickers = tickerRepository.saveAll(tickers)
 
         val watchList = watchListFactory.createEmptyUserWatchList(
             watchListName = request.name,
@@ -47,16 +46,12 @@ class WatchListTxService(
                 )
             }
         )
-        val tickerCodes = request.tickers.map { it.tickerCode }.toSet()
-        val allTickers = tickerRepository.findAllById(tickerCodes)
 
-
-        return watchListMapper.toWatchListResponse(savedWatchList, tickers = allTickers)
+        return watchListMapper.toWatchListServiceModel(savedWatchList, tickers = savedTickers)
     }
 
     @Transactional
-    fun findByIdOrNull(id: Long) : WatchListOuterClass.WatchList? {
-        val watchListDb = watchListRepository.findByIdOrNull(id) ?: return null
-        return watchListMapper.toWatchListProto(watchListDb)
+    fun findByIdOrNull(id: Long): WatchList? {
+        return watchListRepository.findByIdOrNull(id)?.let { watchListMapper.toWatchListServiceModel(it) }
     }
 }

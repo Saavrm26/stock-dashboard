@@ -1,5 +1,7 @@
 syntax = "proto3";
-package xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1;
+package xyz.saarthakdevelopsstuff.stock_dashboard_api.models.cache;
+
+option java_outer_classname = "WatchListOuterClass";
 
 import "google/protobuf/timestamp.proto";
 

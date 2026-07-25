@@ -1,9 +1,8 @@
-package xyz.saarthakdevelopsstuff.stock_dashboard_api.models
+package xyz.saarthakdevelopsstuff.stock_dashboard_api.models.dto
 
 import jakarta.validation.constraints.Size
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.WatchListType
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.WatchListVisibility
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.models.TickerDetails
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchListType
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchListVisibility
 
 data class WatchListRequestTickers(
     val tickerCode: String,

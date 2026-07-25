@@ -1,4 +1,4 @@
-package xyz.saarthakdevelopsstuff.stock_dashboard_api.entities
+package xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db
 
 import jakarta.persistence.*
 

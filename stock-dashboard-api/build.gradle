@@ -55,7 +55,8 @@ dependencies {
     implementation 'com.google.protobuf:protobuf-java-util'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.session:spring-session-data-redis'
-	implementation 'org.hibernate.validator:hibernate-validator'
+    implementation 'org.hibernate.validator:hibernate-validator'
+    implementation 'jakarta.json:jakarta.json-api'
     runtimeOnly 'org.postgresql:postgresql'
     implementation 'org.flywaydb:flyway-core:11.20.3'
     implementation 'org.mapstruct:mapstruct:1.7.0.Beta1'
@@ -80,7 +81,6 @@ sourceSets {
     main {
         proto {
             srcDir "../common/proto/v1"
-			srcDir "src"
         }
     }
     java {}

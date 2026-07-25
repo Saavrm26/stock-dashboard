@@ -1,29 +1,33 @@
 package xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.mappers
 
 import com.google.protobuf.Timestamp
-import org.mapstruct.Condition
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 import org.mapstruct.NullValueCheckStrategy
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.Ticker
-import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.WatchListOuterClass.WatchList as WatchListProto
-import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.WatchListOuterClass.WatchListType as ProtoWatchListType
-import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.WatchListOuterClass.WatchListVisibility as ProtoWatchListVisibility
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.WatchList
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.WatchListType
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.WatchListVisibility
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.WatchListResponse
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.cache.WatchListOuterClass.WatchList as WatchListCacheProto
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.cache.WatchListOuterClass.WatchListType as ProtoWatchListType
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.cache.WatchListOuterClass.WatchListVisibility as ProtoWatchListVisibility
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.Ticker
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchList as DbWatchList
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchListType
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchListVisibility
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.dto.WatchListResponse
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.service.WatchList as ServiceWatchList
 
 @Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS, uses = [TickerMapper::class])
 interface WatchListMapper {
 
     @Mapping(target = "createdBy", source = "watchList.createdBy.id")
-    fun toWatchListResponse(watchList: WatchList, tickers: List<Ticker>): WatchListResponse
+    fun toWatchListServiceModel(watchList: DbWatchList, tickers: List<Ticker>): ServiceWatchList
 
     @Mapping(target = "createdBy", source = "watchList.createdBy.id")
-    fun toWatchListProto(watchList: WatchList?): WatchListProto?
+    fun toWatchListServiceModel(watchList: DbWatchList): ServiceWatchList
 
-    fun toWatchListResponse(watchListCache: WatchListProto): WatchListResponse
+    fun toWatchListServiceModel(cacheModel: WatchListCacheProto): ServiceWatchList
+
+    fun toWatchListCacheModel(watchList: ServiceWatchList): WatchListCacheProto
+
+    fun toWatchListResponse(watchList: ServiceWatchList): WatchListResponse
 
     fun toInstant(timestamp: Timestamp?): java.time.Instant? {
         return timestamp?.let { java.time.Instant.ofEpochSecond(it.seconds, it.nanos.toLong()) }
@@ -62,6 +66,4 @@ interface WatchListMapper {
             WatchListType.FIXED -> ProtoWatchListType.FIXED
         }
     }
-
-
 }
