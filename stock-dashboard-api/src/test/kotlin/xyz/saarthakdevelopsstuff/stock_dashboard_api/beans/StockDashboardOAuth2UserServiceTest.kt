@@ -24,7 +24,7 @@ import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.factories.UserFactory
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.factories.WatchListFactory
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.UserRepository
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.WatchListRepository
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.WatchList
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchList as DbWatchList
 import java.time.Instant
 import java.util.*
 import kotlin.test.assertEquals
@@ -62,7 +62,7 @@ class StockDashboardOAuth2UserServiceTest {
     @BeforeEach
     fun cleanup() {
         // Clean up in proper order due to foreign key constraints
-        watchListRepository.findAll().forEach { watchList: WatchList ->
+        watchListRepository.findAll().forEach { watchList: DbWatchList ->
             watchListRepository.delete(watchList)
         }
         userRepository.findAll().forEach { user ->

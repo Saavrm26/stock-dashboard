@@ -19,6 +19,7 @@ import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.dto.GetWatchListRequ
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.dto.WatchListRequest
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.dto.WatchListResponse
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.service.WatchList
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.service.WatchListAggregate
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.validation.annotation.ValidWatchListJsonPatch
 
 @Service
@@ -41,9 +42,10 @@ class WatchListServiceV1(
         )
 
         val requestedTickers = watchListRequest.tickers
-        val details = stockService.getBulkTickerDetails(requestedTickers.map { it.tickerCode })
+        val tickerCodes = requestedTickers.distinctBy { it.tickerCode }.map { it.tickerCode }
+        val details = stockService.getBulkTickerDetails(tickerCodes)
         val detailsByCode = details.associateBy { it.symbol }
-        val unresolved = requestedTickers.map { it.tickerCode }.filter { it !in detailsByCode }
+        val unresolved = tickerCodes.filter { it !in detailsByCode }
 
         if (unresolved.isNotEmpty()) {
             throw StockClientException(
@@ -52,47 +54,50 @@ class WatchListServiceV1(
             )
         }
 
-        val tickers = requestedTickers.distinctBy { it.tickerCode }.map { request ->
-            val tickerDetails = detailsByCode.getValue(request.tickerCode)
+        val requestedByCode = requestedTickers.associateBy { it.tickerCode }
+        val tickerDetailsList = tickerCodes.map { detailsByCode.getValue(it) }
+        val tickers = tickerDetailsList.map { tickerDetails ->
             Ticker(
                 tickerCode = tickerDetails.symbol,
                 tickerLongName = tickerDetails.tickerName ?: tickerDetails.symbol,
-                tickerExchange = tickerDetails.exchange ?: request.tickerExchange,
+                tickerExchange = tickerDetails.exchange ?: requestedByCode.getValue(tickerDetails.symbol).tickerExchange,
                 tickerDetails = objectMapper.writeValueAsString(tickerDetails)
             )
         }
 
         val watchList = watchListTxService.createWatchList(user, watchListRequest, tickers)
-        return watchListMapper.toWatchListResponse(watchList)
+        val aggregate = watchListMapper.toWatchListAggregate(watchList, tickerDetailsList)
+        return watchListMapper.toWatchListResponse(aggregate)
     }
 
     fun updateWatchList(id: Long, username: String, @ValidWatchListJsonPatch jsonPatch: JsonPatch) {
-        // use cache service to get the watchlist entity itself first
-        val watchList = watchListMapper.toWatchListResponse(getWatchListById(id))
+        val watchList = getWatchListById(id)
 
         val createdByUsername = watchList.createdBy
         if (createdByUsername != username) {
             throw WatchListException(WatchListExceptionErrorCode.UNAUTHORIZED, "Not authorized for this action")
         }
 
-        val patchedWatchListResource = applyPatchToWatchListResource(jsonPatch, watchList)
-        if (patchedWatchListResource.id != watchList.id) {
+        val patchedWatchList = applyPatchToWatchListResource(jsonPatch, watchList)
+        if (patchedWatchList.id != watchList.id) {
             throw WatchListException(WatchListExceptionErrorCode.BAD_ACTION, "Id cannot be patched")
         }
     }
 
     fun getWatchList(id: Long, getWatchListRequest: GetWatchListRequest): WatchListResponse {
-        // check cache, use fallback, if fallback not present throw else save in cache
         val watchList = getWatchListById(id)
 
         val watchListTickers = watchListTickerRepository.findTickersByWatchListId(id)
 
-        if (watchListTickers.isNotEmpty()) {
+        val tickerDetails = if (watchListTickers.isNotEmpty()) {
             val tickerCodes = watchListTickers.map { it.tickerCode }
-            stockClient.getBulkTickerDetails(tickerCodes)
+            stockService.getBulkTickerDetails(tickerCodes)
+        } else {
+            emptyList()
         }
 
-        return watchListMapper.toWatchListResponse(watchList)
+        val aggregate = watchListMapper.toWatchListAggregate(watchList, tickerDetails)
+        return watchListMapper.toWatchListResponse(aggregate)
     }
 
     private fun getWatchListById(id: Long): WatchList {
@@ -107,10 +112,10 @@ class WatchListServiceV1(
     }
 
     private fun applyPatchToWatchListResource(
-        jsonPatch: JsonPatch, watchList: WatchListResponse
-    ): WatchListResponse {
+        jsonPatch: JsonPatch, watchList: WatchList
+    ): WatchList {
         val patched = jsonPatch.apply(objectMapper.convertValue<JsonStructure>(watchList))
-        return objectMapper.convertValue<WatchListResponse>(patched)
+        return objectMapper.convertValue<WatchList>(patched)
     }
 
 }

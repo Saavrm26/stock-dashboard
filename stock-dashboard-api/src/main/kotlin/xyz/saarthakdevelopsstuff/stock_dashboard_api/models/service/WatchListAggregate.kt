@@ -4,7 +4,7 @@ import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchListType
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchListVisibility
 import java.time.Instant
 
-data class WatchList(
+data class WatchListAggregate(
     val id: Long?,
     val name: String,
     val description: String,
@@ -14,5 +14,5 @@ data class WatchList(
     val screenQuery: String?,
     val createdAt: Instant?,
     val updatedAt: Instant?,
-    val tickerSymbols: List<String>? = null
+    val tickers: List<TickerDetails>? = null
 )

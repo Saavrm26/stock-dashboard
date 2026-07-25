@@ -12,22 +12,42 @@ import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchList as DbWa
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchListType
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchListVisibility
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.dto.WatchListResponse
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.service.TickerDetails
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.service.WatchList as ServiceWatchList
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.service.WatchListAggregate
 
 @Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS, uses = [TickerMapper::class])
 interface WatchListMapper {
 
     @Mapping(target = "createdBy", source = "watchList.createdBy.id")
+    @Mapping(target = "tickerSymbols", source = "tickers")
     fun toWatchListServiceModel(watchList: DbWatchList, tickers: List<Ticker>): ServiceWatchList
 
     @Mapping(target = "createdBy", source = "watchList.createdBy.id")
     fun toWatchListServiceModel(watchList: DbWatchList): ServiceWatchList
 
+    @Mapping(target = "tickerSymbols", source = "tickerSymbolsList")
     fun toWatchListServiceModel(cacheModel: WatchListCacheProto): ServiceWatchList
 
-    fun toWatchListCacheModel(watchList: ServiceWatchList): WatchListCacheProto
+    fun toWatchListCacheModel(watchList: ServiceWatchList): WatchListCacheProto = WatchListCacheProto.newBuilder()
+        .setId(watchList.id ?: 0)
+        .setName(watchList.name)
+        .setDescription(watchList.description)
+        .apply { watchList.createdBy?.let { setCreatedBy(it) } }
+        .setVisibility(toProtoVisibility(watchList.visibility))
+        .setType(toProtoType(watchList.type))
+        .apply { watchList.screenQuery?.let { setScreenQuery(it) } }
+        .apply { watchList.createdAt?.let { setCreatedAt(toTimestamp(it)) } }
+        .apply { watchList.updatedAt?.let { setUpdatedAt(toTimestamp(it)) } }
+        .apply { watchList.tickerSymbols?.let { addAllTickerSymbols(it) } }
+        .build()
 
-    fun toWatchListResponse(watchList: ServiceWatchList): WatchListResponse
+    @Mapping(target = "tickers", source = "tickerDetails")
+    fun toWatchListAggregate(watchList: ServiceWatchList, tickerDetails: List<TickerDetails>): WatchListAggregate
+
+    fun toWatchListResponse(watchList: WatchListAggregate): WatchListResponse
+
+    fun tickerToSymbol(ticker: Ticker): String = ticker.tickerCode
 
     fun toInstant(timestamp: Timestamp?): java.time.Instant? {
         return timestamp?.let { java.time.Instant.ofEpochSecond(it.seconds, it.nanos.toLong()) }

@@ -7,8 +7,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.TestContainersConfiguration
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.Ticker
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.models.TickerDetails
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.Ticker
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -20,16 +19,12 @@ class TickerRepositoryTest {
 
     @Test
     fun `saves and loads ticker details as JSONB`() {
+        val tickerJson = """{"symbol":"AAPL","sector":"Technology","marketCap":3000000000000}"""
         val ticker = Ticker(
             tickerCode = "AAPL",
             tickerLongName = "Apple Inc.",
             tickerExchange = "NASDAQ",
-            tickerDetails = TickerDetails(
-                symbol = "AAPL",
-                sector = "Technology",
-                marketCap = 3_000_000_000_000L,
-                additionalDetails = mutableMapOf("currency" to "USD")
-            )
+            tickerDetails = tickerJson
         )
 
         tickerRepository.saveAndFlush(ticker)
@@ -37,8 +32,6 @@ class TickerRepositoryTest {
         val loaded = tickerRepository.findById("AAPL").get()
 
         assertEquals("AAPL", loaded.tickerCode)
-        assertEquals("Technology", loaded.tickerDetails.sector)
-        assertEquals(3_000_000_000_000L, loaded.tickerDetails.marketCap)
-        assertEquals("USD", loaded.tickerDetails.additionalDetails["currency"])
+        assertEquals(tickerJson, loaded.tickerDetails)
     }
 }

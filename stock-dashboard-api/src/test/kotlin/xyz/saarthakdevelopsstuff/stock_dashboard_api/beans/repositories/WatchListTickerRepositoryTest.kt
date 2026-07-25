@@ -7,14 +7,11 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.TestContainersConfiguration
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.TickerRepository
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.Ticker
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.WatchList
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.WatchListTicker
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.WatchListType
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.WatchListVisibility
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.models.TickerDetails
-import java.time.Instant
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.Ticker
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchList
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchListTicker
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchListType
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchListVisibility
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -37,7 +34,7 @@ class WatchListTickerRepositoryTest {
                 tickerCode = "AAPL",
                 tickerLongName = "Apple Inc.",
                 tickerExchange = "NASDAQ",
-                tickerDetails = TickerDetails("AAPL", "Technology", 3_000_000_000_000L)
+                tickerDetails = """{"symbol":"AAPL","industry":"Technology","marketCap":3000000000000}"""
             )
         )
 
@@ -46,20 +43,16 @@ class WatchListTickerRepositoryTest {
                 tickerCode = "GOOGL",
                 tickerLongName = "Alphabet Inc.",
                 tickerExchange = "NASDAQ",
-                tickerDetails = TickerDetails("GOOGL", "Technology", 2_000_000_000_000L)
+                tickerDetails = """{"symbol":"GOOGL","industry":"Technology","marketCap":2000000000000}"""
             )
         )
 
         val watchList = WatchList(
-            id = null,
             name = "Test WatchList",
             description = "Test Description",
             createdBy = null,
             visibility = WatchListVisibility.PUBLIC,
-            type = WatchListType.DYNAMIC,
-            screenQuery = null,
-            createdAt = Instant.now(),
-            updatedAt = Instant.now()
+            type = WatchListType.DYNAMIC
         )
         val savedWatchList = watchListRepository.save(watchList)
 

@@ -14,11 +14,11 @@ import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.TickerRe
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.UserRepository
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.WatchListRepository
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.WatchListTickerRepository
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.User
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.entities.WatchListVisibility
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.User
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchListVisibility
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.dto.WatchListRequest
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.dto.WatchListRequestTickers
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.exceptions.StockClientException
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.WatchListRequest
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.WatchListRequestTickers
 import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.TickerDetailsOuterClass.TickerDetails as ProtoTickerDetails
 import xyz.saarthakdevelopsstuff.stock_dashboard.common.proto.v1.TickerDetailsOuterClass.TickerDetailsList
 import kotlin.test.assertEquals
@@ -108,7 +108,6 @@ class WatchListServiceV1Test {
 
         assertEquals(2, tickerRepository.count())
         assertEquals("Apple Inc.", tickerRepository.findById("AAPL").get().tickerLongName)
-        assertEquals("Technology", tickerRepository.findById("AAPL").get().tickerDetails.sector)
         assertEquals(2, watchListTickerRepository.count())
     }
 

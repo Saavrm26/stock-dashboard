@@ -1,5 +1,6 @@
 package xyz.saarthakdevelopsstuff.stock_dashboard_api.controller.api.v1
 
+import jakarta.json.JsonPatch
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -7,6 +8,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -45,8 +47,9 @@ class WatchListApiController(
         return watchListServiceV1.getWatchList(id, getWatchListRequest)
     }
 
-    @PutMapping("/{id}")
-    fun updateWatchList(@PathVariable("id") id: Long, @AuthenticationPrincipal jwt: Jwt) {
+    @PatchMapping("/{id}", consumes = ["application/json-patch+json"])
+    fun updateWatchList(@PathVariable("id") id: Long, @AuthenticationPrincipal jwt: Jwt, @RequestBody jsonPatch: JsonPatch) {
         logger.info("Updating watchlist for $id")
+        watchListServiceV1.updateWatchList(id, jwt.subject, jsonPatch)
     }
 }
