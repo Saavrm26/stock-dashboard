@@ -21,13 +21,14 @@ interface WatchListMapper {
 
     @Mapping(target = "createdBy", source = "watchList.createdBy.id")
     @Mapping(target = "tickerSymbols", source = "tickers")
-    fun toWatchListServiceModel(watchList: DbWatchList, tickers: List<Ticker>): ServiceWatchList
+    fun toWatchListServiceModelFromDbWatchListAndTickers(watchList: DbWatchList, tickers: List<Ticker>): ServiceWatchList
 
     @Mapping(target = "createdBy", source = "watchList.createdBy.id")
-    fun toWatchListServiceModel(watchList: DbWatchList): ServiceWatchList
+    @Mapping(target = "tickerSymbols", source = "tickerSymbols")
+    fun toWatchListServiceModel(watchList: DbWatchList, tickerSymbols: List<String>): ServiceWatchList
 
-    @Mapping(target = "tickerSymbols", source = "tickerSymbolsList")
-    fun toWatchListServiceModel(cacheModel: WatchListCacheProto): ServiceWatchList
+    @Mapping(target = "tickerSymbols", source = "tickerSymbols")
+    fun toWatchListServiceModel(cacheModel: WatchListCacheProto, tickerSymbols: Set<String>): ServiceWatchList
 
     fun toWatchListCacheModel(watchList: ServiceWatchList): WatchListCacheProto = WatchListCacheProto.newBuilder()
         .setId(watchList.id ?: 0)
@@ -39,7 +40,6 @@ interface WatchListMapper {
         .apply { watchList.screenQuery?.let { setScreenQuery(it) } }
         .apply { watchList.createdAt?.let { setCreatedAt(toTimestamp(it)) } }
         .apply { watchList.updatedAt?.let { setUpdatedAt(toTimestamp(it)) } }
-        .apply { watchList.tickerSymbols?.let { addAllTickerSymbols(it) } }
         .build()
 
     @Mapping(target = "tickers", source = "tickerDetails")

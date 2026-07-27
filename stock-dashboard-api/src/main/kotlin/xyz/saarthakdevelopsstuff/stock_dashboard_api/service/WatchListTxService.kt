@@ -47,11 +47,13 @@ class WatchListTxService(
             }
         )
 
-        return watchListMapper.toWatchListServiceModel(savedWatchList, tickers = savedTickers)
+        return watchListMapper.toWatchListServiceModelFromDbWatchListAndTickers(savedWatchList, tickers = savedTickers)
     }
 
     @Transactional
     fun findByIdOrNull(id: Long): WatchList? {
-        return watchListRepository.findByIdOrNull(id)?.let { watchListMapper.toWatchListServiceModel(it) }
+        val dbWatchList = watchListRepository.findByIdOrNull(id) ?: return null
+        val dbWatchListTickerSymbols = watchListTickerRepository.findTickersByWatchListId(id).map { it.tickerCode }
+        return  watchListMapper.toWatchListServiceModel(dbWatchList, dbWatchListTickerSymbols)
     }
 }

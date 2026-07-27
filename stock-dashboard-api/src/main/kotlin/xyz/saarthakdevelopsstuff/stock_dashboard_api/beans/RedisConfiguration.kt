@@ -20,4 +20,13 @@ class RedisConfiguration {
         template.hashValueSerializer = RedisSerializer.byteArray()
         return template
     }
+
+    @Bean("setRedisTemplate")
+    fun setRedisTemplate(redisConnectionFactory: RedisConnectionFactory): RedisTemplate<String, String> {
+        val template = RedisTemplate<String, String>()
+        template.connectionFactory = redisConnectionFactory
+        template.keySerializer = StringRedisSerializer()
+        template.valueSerializer = StringRedisSerializer()
+        return template
+    }
 }

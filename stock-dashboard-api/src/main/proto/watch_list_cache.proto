@@ -25,6 +25,4 @@ message WatchList {
   optional string screen_query = 7 [json_name = "screenQuery"];
   optional google.protobuf.Timestamp created_at = 8 [json_name = "createdAt"];
   optional google.protobuf.Timestamp updated_at = 9 [json_name = "updatedAt"];
-  repeated string ticker_symbols = 10 [json_name = "tickerSymbols"];
-
 }
