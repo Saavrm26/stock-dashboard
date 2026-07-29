@@ -25,6 +25,7 @@ class WatchListTxService(
     @Transactional
     fun createWatchList(
         user: User,
+        // TODO: instead of WatchListRequest take in service layer model
         request: WatchListRequest,
         tickers: List<Ticker>
     ): WatchList {

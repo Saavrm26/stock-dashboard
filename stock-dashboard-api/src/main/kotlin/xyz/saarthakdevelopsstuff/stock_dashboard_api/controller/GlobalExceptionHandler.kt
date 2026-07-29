@@ -1,5 +1,6 @@
 package xyz.saarthakdevelopsstuff.stock_dashboard_api.controller
 
+import jakarta.validation.ConstraintViolationException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -94,6 +95,16 @@ class GlobalExceptionHandler {
         }
         return ResponseEntity(
             ErrorResponse(error = "BAD_REQUEST", message = message),
+            HttpStatus.BAD_REQUEST
+        )
+    }
+
+    @ExceptionHandler(ConstraintViolationException::class)
+    fun constraintViolationExceptions(e: ConstraintViolationException): ResponseEntity<ErrorResponse> {
+        logger.error("ConstraintViolationException occurred", e)
+        val message = e.message ?: "Unknown constraint validation error occurred"
+        return ResponseEntity(
+            ErrorResponse(error= "BAD_REQUEST", message=message),
             HttpStatus.BAD_REQUEST
         )
     }

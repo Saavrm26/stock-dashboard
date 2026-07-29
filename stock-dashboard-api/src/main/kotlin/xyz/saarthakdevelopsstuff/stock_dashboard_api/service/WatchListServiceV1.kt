@@ -6,7 +6,9 @@ import jakarta.json.JsonPatch
 import jakarta.json.JsonStructure
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.validation.annotation.Validated
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.clients.StockClient
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.factories.WatchListFactory
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.mappers.WatchListMapper
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.UserRepository
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.WatchListTickerRepository
@@ -23,11 +25,12 @@ import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.service.WatchListAgg
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.validation.annotation.ValidWatchListJsonPatch
 
 @Service
+@Validated
 class WatchListServiceV1(
     private val watchListTickerRepository: WatchListTickerRepository,
     private val watchListMapper: WatchListMapper,
     private val userRepository: UserRepository,
-    private val stockClient: StockClient,
+    private val watchListFactory: WatchListFactory,
     private val watchListTxService: WatchListTxService,
     private val watchListCacheService: WatchListCacheService,
     private val stockService: StockServiceV1,
@@ -64,8 +67,10 @@ class WatchListServiceV1(
                 tickerDetails = objectMapper.writeValueAsString(tickerDetails)
             )
         }
+        // TODO: create empty service level watchlist here
 
         val watchList = watchListTxService.createWatchList(user, watchListRequest, tickers)
+        watchListCacheService.saveWatchList(watchList)
         val aggregate = watchListMapper.toWatchListAggregate(watchList, tickerDetailsList)
         return watchListMapper.toWatchListResponse(aggregate)
     }
@@ -79,9 +84,7 @@ class WatchListServiceV1(
         }
 
         val patchedWatchList = applyPatchToWatchListResource(jsonPatch, watchList)
-        if (patchedWatchList.id != watchList.id) {
-            throw WatchListException(WatchListExceptionErrorCode.BAD_ACTION, "Id cannot be patched")
-        }
+
     }
 
     fun getWatchList(id: Long, getWatchListRequest: GetWatchListRequest): WatchListResponse {
@@ -99,6 +102,8 @@ class WatchListServiceV1(
         val aggregate = watchListMapper.toWatchListAggregate(watchList, tickerDetails)
         return watchListMapper.toWatchListResponse(aggregate)
     }
+
+
 
     private fun getWatchListById(id: Long): WatchList {
         var watchList = watchListCacheService.findByIdOrNull(id)
