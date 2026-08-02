@@ -35,7 +35,7 @@ class WatchList(
     @Column(name = "created_at", updatable = false, nullable = false) val createdAt: Instant? = null
 
     @UpdateTimestamp
-    @Column(name = "updated_at", updatable = false, nullable = false) val updatedAt: Instant? = null
+    @Column(name = "updated_at", nullable = false) val updatedAt: Instant? = null
 }
 
 enum class WatchListVisibility { PRIVATE, PUBLIC }

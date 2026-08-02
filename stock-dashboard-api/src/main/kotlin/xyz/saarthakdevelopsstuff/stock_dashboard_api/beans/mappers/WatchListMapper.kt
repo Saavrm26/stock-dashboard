@@ -4,24 +4,44 @@ import com.google.protobuf.Timestamp
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 import org.mapstruct.NullValueCheckStrategy
+import org.mapstruct.factory.Mappers
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.cache.WatchListOuterClass.WatchList as WatchListCacheProto
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.cache.WatchListOuterClass.WatchListType as ProtoWatchListType
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.cache.WatchListOuterClass.WatchListVisibility as ProtoWatchListVisibility
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.Ticker
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchList as DbWatchList
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchListTicker
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchListType
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchListVisibility
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.dto.WatchListResponse
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.service.TickerDetails
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.service.User as ServiceUser
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.service.WatchList as ServiceWatchList
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.service.WatchListAggregate
 
-@Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS, uses = [TickerMapper::class])
+@Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS, uses = [TickerMapper::class, UserMapper::class])
 interface WatchListMapper {
 
     @Mapping(target = "createdBy", source = "watchList.createdBy.id")
     @Mapping(target = "tickerSymbols", source = "tickers")
     fun toWatchListServiceModelFromDbWatchListAndTickers(watchList: DbWatchList, tickers: List<Ticker>): ServiceWatchList
+
+    fun toDbWatchList(watchList: ServiceWatchList, user: ServiceUser): DbWatchList {
+        val dbUser = Mappers.getMapper(UserMapper::class.java).toDbUser(user)
+        return DbWatchList(
+            id = watchList.id,
+            name = watchList.name,
+            description = watchList.description,
+            createdBy = dbUser,
+            visibility = watchList.visibility,
+            type = watchList.type,
+            screenQuery = watchList.screenQuery
+        )
+    }
+
+    fun toDbWatchListTickers(watchList: DbWatchList, tickerSymbols: List<String>): List<WatchListTicker> {
+        return tickerSymbols.map { WatchListTicker(watchList = watchList, tickerCode = it) }
+    }
 
     @Mapping(target = "createdBy", source = "watchList.createdBy.id")
     @Mapping(target = "tickerSymbols", source = "tickerSymbols")

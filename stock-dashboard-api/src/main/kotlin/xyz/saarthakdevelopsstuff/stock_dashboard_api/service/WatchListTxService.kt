@@ -1,6 +1,7 @@
 package xyz.saarthakdevelopsstuff.stock_dashboard_api.service
 
 import jakarta.transaction.Transactional
+import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.factories.WatchListFactory
@@ -9,9 +10,8 @@ import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.TickerRe
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.WatchListRepository
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.WatchListTickerRepository
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.Ticker
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.User
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchListTicker
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.dto.WatchListRequest
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.service.User as ServiceUser
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.service.WatchList
 
 @Service
@@ -22,33 +22,26 @@ class WatchListTxService(
     private val watchListTickerRepository: WatchListTickerRepository,
     private val watchListFactory: WatchListFactory
 ) {
+    private val logger = LoggerFactory.getLogger(WatchListTxService::class.java)
     @Transactional
     fun createWatchList(
-        user: User,
-        // TODO: instead of WatchListRequest take in service layer model
-        request: WatchListRequest,
+        user: ServiceUser,
+        serviceWatchList: WatchList,
         tickers: List<Ticker>
     ): WatchList {
         val savedTickers = tickerRepository.saveAll(tickers)
 
-        val watchList = watchListFactory.createEmptyUserWatchList(
-            watchListName = request.name,
-            watchListDescription = request.description,
-            user = user,
-            visibility = request.visibility
-        )
-        val savedWatchList = watchListRepository.save(watchList)
 
-        watchListTickerRepository.saveAll(
-            request.tickers.distinctBy { it.tickerCode }.map {
-                WatchListTicker(
-                    watchList = savedWatchList,
-                    tickerCode = it.tickerCode
-                )
-            }
-        )
+        val dbWatchList = watchListMapper.toDbWatchList(serviceWatchList, user)
+        val savedDbWatchList = watchListRepository.save(dbWatchList)
+        val tickerSymbols = serviceWatchList.tickerSymbols
+        if (tickerSymbols != null) {
+            val tickerEntities = watchListMapper.toDbWatchListTickers(savedDbWatchList, tickerSymbols)
+            val savedWatchListTickers = watchListTickerRepository.saveAll(tickerEntities)
+            logger.info("Saved the tickers $savedWatchListTickers")
+        }
 
-        return watchListMapper.toWatchListServiceModelFromDbWatchListAndTickers(savedWatchList, tickers = savedTickers)
+        return watchListMapper.toWatchListServiceModelFromDbWatchListAndTickers(savedDbWatchList, tickers = savedTickers)
     }
 
     @Transactional

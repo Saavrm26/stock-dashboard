@@ -7,6 +7,7 @@ import jakarta.json.JsonStructure
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.validation.annotation.Validated
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.StockDashboardOAuth2UserService
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.clients.StockClient
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.factories.WatchListFactory
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.mappers.WatchListMapper
@@ -27,9 +28,9 @@ import xyz.saarthakdevelopsstuff.stock_dashboard_api.validation.annotation.Valid
 @Service
 @Validated
 class WatchListServiceV1(
+    private val stockDashboardOAuth2UserService: StockDashboardOAuth2UserService,
     private val watchListTickerRepository: WatchListTickerRepository,
     private val watchListMapper: WatchListMapper,
-    private val userRepository: UserRepository,
     private val watchListFactory: WatchListFactory,
     private val watchListTxService: WatchListTxService,
     private val watchListCacheService: WatchListCacheService,
@@ -40,10 +41,9 @@ class WatchListServiceV1(
     // future cache-prewarm process), not the source of truth for what to fetch. Ticker details are
     // always resolved fresh through StockServiceV1, which is Redis-cached.
     fun createWatchList(username: String, watchListRequest: WatchListRequest): WatchListResponse {
-        val user = userRepository.findByIdOrNull(username) ?: throw WatchListException(
+        val user = stockDashboardOAuth2UserService.getUser(username) ?: throw WatchListException(
             WatchListExceptionErrorCode.USER_NOT_FOUND, "The user creating watchlist couldn't be found. "
         )
-
         val requestedTickers = watchListRequest.tickers
         val tickerCodes = requestedTickers.distinctBy { it.tickerCode }.map { it.tickerCode }
         val details = stockService.getBulkTickerDetails(tickerCodes)
@@ -69,7 +69,13 @@ class WatchListServiceV1(
         }
         // TODO: create empty service level watchlist here
 
-        val watchList = watchListTxService.createWatchList(user, watchListRequest, tickers)
+        val serviceWatchList = watchListFactory.createEmptyUserWatchList(
+            watchListName = watchListRequest.name,
+            watchListDescription = watchListRequest.description,
+            user = user,
+            visibility = watchListRequest.visibility
+        )
+        val watchList = watchListTxService.createWatchList(user, serviceWatchList, tickers)
         watchListCacheService.saveWatchList(watchList)
         val aggregate = watchListMapper.toWatchListAggregate(watchList, tickerDetailsList)
         return watchListMapper.toWatchListResponse(aggregate)

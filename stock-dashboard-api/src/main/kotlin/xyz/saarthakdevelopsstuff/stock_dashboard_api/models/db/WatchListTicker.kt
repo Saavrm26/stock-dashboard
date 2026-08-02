@@ -9,6 +9,10 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
+import org.hibernate.annotations.Cascade
+import org.hibernate.annotations.CascadeType
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
 import java.time.Instant
 
 @Entity
@@ -19,16 +23,19 @@ class WatchListTicker(
     val id: Long? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @Cascade(CascadeType.SAVE_UPDATE)
     @JoinColumn(name = "watch_list_id", nullable = false)
     val watchList: WatchList,
 
     @Column(name = "ticker_code", nullable = false)
     val tickerCode: String,
 
-    @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
-    val createdAt: Instant? = null,
+) {
 
-    @Column(name = "updated_at", nullable = false, updatable = false, insertable = false)
-    val updatedAt: Instant? = null,
-)
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false, nullable = false) val createdAt: Instant? = null
+
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false) val updatedAt: Instant? = null
+}
 

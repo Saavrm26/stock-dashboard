@@ -22,6 +22,7 @@ import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.TestContainersConfiguration
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.factories.UserFactory
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.factories.WatchListFactory
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.mappers.WatchListMapper
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.UserRepository
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.WatchListRepository
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.db.WatchList as DbWatchList
@@ -58,6 +59,9 @@ class StockDashboardOAuth2UserServiceTest {
 
     @Autowired
     private lateinit var watchListFactory: WatchListFactory
+
+    @Autowired
+    private lateinit var watchListMapper: WatchListMapper
 
     @BeforeEach
     fun cleanup() {
@@ -260,12 +264,16 @@ class StockDashboardOAuth2UserServiceTest {
         val existingUser = userFactory.createUser(fullName, userName, email)
         userRepository.save(existingUser)
 
-        var existingWatchlist = watchListFactory.createEmptyUserWatchList(
+        val serviceWatchList = watchListFactory.createEmptyUserWatchList(
             watchListName = "My watch list",
             watchListDescription = "My followed stocks",
-            user = existingUser
+            user = xyz.saarthakdevelopsstuff.stock_dashboard_api.models.service.User(
+                id = existingUser.id,
+                fullName = existingUser.fullName,
+                email = existingUser.email
+            )
         )
-        existingWatchlist = watchListRepository.save(existingWatchlist)
+        val existingWatchlist = watchListRepository.save(watchListMapper.toDbWatchList(serviceWatchList, existingUser))
 
         val mockRequest = createMockOidcUserRequest(userName, email, fullName)
         val mockOidcUser = createMockOidcUser(userName, email, fullName)

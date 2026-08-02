@@ -28,7 +28,7 @@ class WatchListCacheService(
         val cacheKeyTickers = "$cacheKeyWatchList:tickers"
         val cacheModel = watchListMapper.toWatchListCacheModel(watchList)
         redisTemplate.opsForValue().set(cacheKeyWatchList, cacheModel.toByteArray(), 5, TimeUnit.MINUTES)
-        if (watchList.tickerSymbols != null) {
+        if (!watchList.tickerSymbols.isNullOrEmpty()) {
             setRedisTemplate.opsForSet().add(cacheKeyTickers, *watchList.tickerSymbols.toTypedArray())
             setRedisTemplate.expire(cacheKeyTickers, 5, TimeUnit.MINUTES)
         }

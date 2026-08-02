@@ -2,9 +2,11 @@ package xyz.saarthakdevelopsstuff.stock_dashboard_api.service
 
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Import
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
 import org.mockito.kotlin.whenever
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -47,6 +49,13 @@ class WatchListServiceV1Test {
     @MockBean
     private lateinit var stockClient: StockClient
 
+    @Autowired
+    private lateinit var redisTemplate: RedisTemplate<String, ByteArray>
+
+    @Autowired
+    @Qualifier("setRedisTemplate")
+    private lateinit var setRedisTemplate: RedisTemplate<String, String>
+
     @MockBean
     private lateinit var clientRegistrationRepository: ClientRegistrationRepository
 
@@ -62,6 +71,8 @@ class WatchListServiceV1Test {
         watchListRepository.deleteAll()
         tickerRepository.deleteAll()
         userRepository.deleteAll()
+        redisTemplate.connectionFactory?.connection?.flushAll()
+        setRedisTemplate.connectionFactory?.connection?.flushAll()
     }
 
     @Test

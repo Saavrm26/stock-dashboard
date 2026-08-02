@@ -30,8 +30,9 @@ class StockServiceV1(
         val cachedBySymbol = cachedTickerDetails.associateBy { it.symbol }
 
         val missingTickers = tickerCodes.distinct().filter { it !in cachedBySymbol }
+        if (missingTickers.isEmpty()) return cachedTickerDetails
 
-        val apiTickerDetailsList = stockClient.getBulkTickerDetails(missingTickers)
+        val apiTickerDetailsList = stockClient.getBulkTickerDetails(missingTickers) ?: return cachedTickerDetails
         stockCacheService.setBulkTickerDetails(apiTickerDetailsList)
 
         val freshTickerDetails = apiTickerDetailsList.tickersList.map { tickerMapper.toTickerDetails(it) }

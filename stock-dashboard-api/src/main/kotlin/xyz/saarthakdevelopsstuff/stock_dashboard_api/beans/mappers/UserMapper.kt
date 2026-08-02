@@ -8,5 +8,8 @@ import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.service.User as Serv
 @Mapper(componentModel = "spring")
 interface UserMapper {
     fun toUserServiceModel(user: DbUser?): ServiceUser?
+
+    fun toDbUser(user: ServiceUser): DbUser
+
     fun toUserResponse(user: ServiceUser?): UserResponse
 }

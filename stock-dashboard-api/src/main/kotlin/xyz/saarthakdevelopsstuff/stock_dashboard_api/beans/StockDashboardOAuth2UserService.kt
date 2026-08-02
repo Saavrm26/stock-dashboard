@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.factories.UserFactory
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.factories.WatchListFactory
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.mappers.UserMapper
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.mappers.WatchListMapper
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.UserRepository
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.WatchListRepository
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.models.service.User
@@ -21,7 +22,8 @@ class StockDashboardOAuth2UserService(
     private val userFactory: UserFactory,
     private val watchListFactory: WatchListFactory,
     private val watchListRepository: WatchListRepository,
-    private val userMapper: UserMapper
+    private val userMapper: UserMapper,
+    private val watchListMapper: WatchListMapper
 ) : OAuth2UserService<OidcUserRequest, OidcUser> {
 
     private val logger = LoggerFactory.getLogger(StockDashboardOAuth2UserService::class.java)
@@ -42,13 +44,13 @@ class StockDashboardOAuth2UserService(
 
     @Transactional
     private fun saveStandardUser(fullName: String, userName: String, email: String) {
-        val user = userRepository.save(userFactory.createUser(fullName, userName, email))
-        logger.info("Created new user ${user.id}")
-        watchListRepository.save(
-            watchListFactory.createEmptyUserWatchList(
-                watchListName = "My watch list", watchListDescription = "My followed stocks", user = user
-            )
+        val serviceUser = userFactory.createUser(fullName, userName, email)
+        val dbUser = userRepository.save(userMapper.toDbUser(serviceUser))
+        logger.info("Created new user ${dbUser.id}")
+        val serviceWatchList = watchListFactory.createEmptyUserWatchList(
+            watchListName = "My watch list", watchListDescription = "My followed stocks", user = serviceUser
         )
+        watchListRepository.save(watchListMapper.toDbWatchList(serviceWatchList, serviceUser))
     }
 
 

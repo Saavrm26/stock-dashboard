@@ -8,7 +8,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.clients.StockClient
+import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.factories.WatchListFactory
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.mappers.WatchListMapper
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.TickerRepository
 import xyz.saarthakdevelopsstuff.stock_dashboard_api.beans.repositories.UserRepository
@@ -38,7 +38,7 @@ class WatchListServiceV1UnitTest {
     private val watchListTickerRepository = mock<WatchListTickerRepository>()
     private val watchListMapper = mock<WatchListMapper>()
     private val userRepository = mock<UserRepository>()
-    private val stockClient = mock<StockClient>()
+    private val watchListFactory = mock<WatchListFactory>()
     private val watchListTxService = mock<WatchListTxService>()
     private val watchListCacheService = mock<WatchListCacheService>()
     private val stockService = mock<StockServiceV1>()
@@ -48,7 +48,7 @@ class WatchListServiceV1UnitTest {
         watchListTickerRepository = watchListTickerRepository,
         watchListMapper = watchListMapper,
         userRepository = userRepository,
-        stockClient = stockClient,
+        watchListFactory = watchListFactory,
         watchListTxService = watchListTxService,
         watchListCacheService = watchListCacheService,
         stockService = stockService,
@@ -217,6 +217,6 @@ class WatchListServiceV1UnitTest {
 
         service.createWatchList(username, request)
 
-        verify(stockClient, never()).getBulkTickerDetails(any())
+        verify(stockService).getBulkTickerDetails(listOf("AAPL"))
     }
 }
