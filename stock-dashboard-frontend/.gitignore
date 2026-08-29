@@ -42,4 +42,4 @@ next-env.d.ts
 
 # generated protobuf types
 /model/generated
-model/generated/.gitkeep
+!model/generated/.gitkeep
