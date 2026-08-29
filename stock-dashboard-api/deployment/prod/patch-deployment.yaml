@@ -16,6 +16,7 @@ spec:
       containers:
         - name: app
           image: ghcr.io/saavrm26/stock-dashboard/api:latest
+          imagePullPolicy: Always
           # For debugging
 #          command: ["/bin/bash"]
 #          args: ["-c", "while true; do echo hello; sleep 10; done"]

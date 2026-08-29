@@ -2,7 +2,7 @@ spring:
   config:
     import:
       - "aws-secretsmanager:${AURORA_DB_SECRET_NAME}"
-      - aws-parameterstore:/stock-dashboard/prd/cognito
+      - aws-parameterstore:/stock-dashboard/prod/cognito
 
   datasource:
     # This is wrong, currently. we will also need global pem file
