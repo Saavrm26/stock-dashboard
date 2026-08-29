@@ -93,7 +93,7 @@ message TickerDetails {
   optional double trailing_eps = 72 [json_name = "trailingEps"];
   optional double enterprise_to_revenue = 73 [json_name = "enterpriseToRevenue"];
   optional double enterprise_to_ebitda = 74 [json_name = "enterpriseToEbitda"];
-  optional double _52_week_change = 75 [json_name = "52WeekChange"];
+  optional double week_52_change = 75 [json_name = "52WeekChange"];
   optional double sand_p52_week_change = 76 [json_name = "SandP52WeekChange"];
   optional double last_dividend_value = 77 [json_name = "lastDividendValue"];
   optional int64 last_dividend_date = 78 [json_name = "lastDividendDate"];
@@ -159,4 +159,8 @@ message TickerDetails {
   optional bool crypto_tradeable = 138 [json_name = "cryptoTradeable"];
   optional string short_name = 139 [json_name = "shortName"];
   optional double trailing_peg_ratio = 140 [json_name = "trailingPegRatio"];
+}
+
+message TickerDetailsList {
+  repeated TickerDetails tickers = 1 [json_name = "tickers"];
 }

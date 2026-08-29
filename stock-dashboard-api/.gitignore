@@ -84,3 +84,5 @@ terraform.rc
 # planout
 
 *.env
+**/.superpowers
+.opencode

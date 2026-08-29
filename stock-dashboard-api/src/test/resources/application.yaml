@@ -2,22 +2,22 @@ spring:
   application:
     name: stock_dashboard_api
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+#    driver-class-name: driver-class-nameorg.h2.Driver
     username: sa
     password: password
 
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    open-in-view: true
     hibernate:
-      ddl-auto: create-drop # Ensures a clean schema for every test run
+      ddl-auto: validate # Ensures a clean schema for every test run
     show-sql: true
     properties:
       hibernate:
         format_sql: true
 
   flyway:
-    enabled: false
+    enabled: true
 
   cloud:
     aws:
@@ -90,3 +90,8 @@ management:
 app:
   name: stock-dashboard-api-test
   version: 1.0.0-test
+
+cors:
+  allowed-origins:
+    - http://localhost:3000
+    - https://test-domain.auth.us-east-1.amazoncognito.com

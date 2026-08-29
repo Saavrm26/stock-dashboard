@@ -26,6 +26,7 @@ def main() -> int:
         "protoc",
         f"--proto_path={proto_dir}",
         f"--python_out={output_dir}",
+        f"--pyi_out={output_dir}",
         *[str(proto_file) for proto_file in proto_files],
     ]
     subprocess.run(command, check=True)

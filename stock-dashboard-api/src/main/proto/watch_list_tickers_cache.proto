@@ -1,0 +1,9 @@
+syntax = "proto3";
+package xyz.saarthakdevelopsstuff.stock_dashboard_api.models.cache;
+
+option java_outer_classname = "WatchListTickersOuterClass";
+
+
+message WatchListTickers {
+  repeated string ticker_symbols = 1 [json_name = "tickerSymbols"];
+}
