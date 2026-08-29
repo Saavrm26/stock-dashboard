@@ -158,13 +158,13 @@ export const TickerDetailsView: React.FC<Props> = ({ details }) => {
               <div className="flex justify-between items-start mb-4">
                 <span className="font-label-mono text-[12px] text-outline uppercase">52 Week Change</span>
                 <ColoredIcon 
-                  src={getChangeIcon(details["52WeekChange"])} 
+                  src={getChangeIcon(details.week52Change)} 
                   alt="change" 
-                  className={getChangeColor(details["52WeekChange"])}
+                  className={getChangeColor(details.week52Change)}
                 />
               </div>
-              <div className={`font-display text-[32px] leading-[1.2] tracking-[-0.02em] font-medium font-label-mono ${getChangeColor(details["52WeekChange"])}`}>
-                {formatPercentage(details["52WeekChange"])}
+              <div className={`font-display text-[32px] leading-[1.2] tracking-[-0.02em] font-medium font-label-mono ${getChangeColor(details.week52Change)}`}>
+                {formatPercentage(details.week52Change)}
               </div>
               {details.trailingEps !== undefined && (
                 <div className="mt-4 flex justify-between text-on-surface-variant">
