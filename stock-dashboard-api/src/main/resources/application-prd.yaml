@@ -27,22 +27,22 @@ spring:
         registration:
           cognito:
             client-secret: "${client-secret}"
-            client-id: 2r5efhos59gv3fs6hk59g604c3
+            client-id: 49aogcten4g4f02n9u17f0spr6
             redirect-uri: https://stocks-api.saarthakdevelopsstuff.xyz/login/oauth2/code/cognito
         provider:
           cognito:
-            issuerUri: https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_KVzxBoBd9
+            issuerUri: https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_nlhP5UNlM
       resourceserver:
         jwt:
-          jwk-set-uri: https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_KVzxBoBd9/.well-known/jwks.json
+          jwk-set-uri: https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_nlhP5UNlM/.well-known/jwks.json
 
 cognito:
-  domain: https://ap-south-1kvzxbobd9.auth.ap-south-1.amazoncognito.com
-  client-id: 2r5efhos59gv3fs6hk59g604c3
+  domain: https://ap-south-1nlhp5unlm.auth.ap-south-1.amazoncognito.com
+  client-id: 49aogcten4g4f02n9u17f0spr6
   logoutRedirectUrl: https://stocks.saarthakdevelopsstuff.xyz
   defaultSuccessUrl: https://stocks.saarthakdevelopsstuff.xyz
 
 cors:
   allowed-origins:
     - https://stocks.saarthakdevelopsstuff.xyz
-    - https://ap-south-1kvzxbobd9.auth.ap-south-1.amazoncognito.com
+    - https://ap-south-1nlhp5unlm.auth.ap-south-1.amazoncognito.com
