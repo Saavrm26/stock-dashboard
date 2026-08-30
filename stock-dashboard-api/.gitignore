@@ -86,3 +86,4 @@ terraform.rc
 *.env
 **/.superpowers
 .opencode
+docs/superpowers/**
