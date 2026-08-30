@@ -6,5 +6,5 @@ metadata:
     app: stock-dashboard-frontend
 data:
   NODE_ENV: "production"
-  NEXT_PUBLIC_API_BASE_URL_PROD: "stocks-api.saarthakdevelopsstuff.xyz"
+  NEXT_PUBLIC_API_BASE_URL: "stocks-api.saarthakdevelopsstuff.xyz"
 

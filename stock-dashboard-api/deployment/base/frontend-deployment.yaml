@@ -17,6 +17,7 @@ spec:
       containers:
       - name: frontend
         image: ghcr.io/saavrm26/stock-dashboard/frontend:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 3000
           protocol: TCP
