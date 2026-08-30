@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stock-dashboard-frontend-deployment
+  labels:
+    app: stock-dashboard-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stock-dashboard-frontend
+  template:
+    metadata:
+      labels:
+        app: stock-dashboard-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: ghcr.io/saavrm26/stock-dashboard/frontend:latest
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        envFrom:
+        - configMapRef:
+            name: stock-dashboard-frontend-configmap
