@@ -4,9 +4,8 @@
   "private": true,
   "scripts": {
     "proto:gen": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=./model/generated --ts_proto_opt=esModuleInterop=true,outputServices=generic-definitions,useExactTypes=false --proto_path=../common/proto ../common/proto/v1/*.proto",
-    "prebuild": "npm run proto:gen",
     "dev": "next dev",
-    "build": "next build",
+    "build": "yarn proto:gen && next build",
     "start": "next start",
     "lint": "eslint"
   },
