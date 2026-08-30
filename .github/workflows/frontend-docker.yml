@@ -35,5 +35,7 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: ghcr.io/saavrm26/stock-dashboard/frontend:latest
+          build-args: |
+            NEXT_PUBLIC_API_BASE_URL_PROD=stocks-api.saarthakdevelopsstuff.xyz
           cache-from: type=gha
           cache-to: type=gha,mode=max

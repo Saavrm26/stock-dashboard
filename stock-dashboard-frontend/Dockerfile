@@ -36,6 +36,9 @@ RUN --mount=type=cache,target=/root/.cache/node/corepack \
 COPY . .
 COPY --from=common / /common
 
+ARG NEXT_PUBLIC_API_BASE_URL_PROD
+ENV NEXT_PUBLIC_API_BASE_URL_PROD=$NEXT_PUBLIC_API_BASE_URL_PROD
+
 RUN yarn build
 
 FROM node:24-bookworm-slim AS runtime
