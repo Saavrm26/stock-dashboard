@@ -109,18 +109,18 @@ resource "aws_iam_role" "aws_load_balancer_controller" {
 resource "aws_iam_policy" "aws_load_balancer_controller" {
   name        = "AWSLoadBalancerControllerIAMPolicy_${var.cluster_name}"
   description = "Policy to allow k8s load balancer controller to manage AWS ELB"
-  policy = file("${path.module}/aws-load-balancer-controller-policy.json")
+  policy      = file("${path.module}/aws-load-balancer-controller-policy.json")
 }
 
 resource "aws_iam_role_policy_attachment" "aws_load_balancer_controller" {
-  role = aws_iam_role.aws_load_balancer_controller.name
+  role       = aws_iam_role.aws_load_balancer_controller.name
   policy_arn = aws_iam_policy.aws_load_balancer_controller.arn
 }
 
 
 # EBS CSI Driver
 resource "aws_iam_role" "ebs_csi_driver" {
-  name = "EBSCSIDriverRole_${var.cluster_name}"
+  name        = "EBSCSIDriverRole_${var.cluster_name}"
   description = "IAM role for EBS CSI Driver to manage EBS volumes"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -143,6 +143,36 @@ resource "aws_iam_role" "ebs_csi_driver" {
 }
 
 resource "aws_iam_role_policy_attachment" "ebs_csi_driver" {
-  role   = aws_iam_role.ebs_csi_driver.name
+  role       = aws_iam_role.ebs_csi_driver.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEBSCSIDriverPolicyV2"
+}
+
+# IRSA for CloudWatch Observability addon
+resource "aws_iam_role" "cloudwatch_agent" {
+  name        = "CloudWatchAgentRole_${var.cluster_name}"
+  description = "IAM role for the CloudWatch agent EKS addon"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Federated = module.eks.oidc_provider_arn
+        }
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Condition = {
+          StringEquals = {
+            "${module.eks.oidc_provider}:aud" = "sts.amazonaws.com"
+            "${module.eks.oidc_provider}:sub" = "system:serviceaccount:amazon-cloudwatch:cloudwatch-agent"
+          }
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "cloudwatch_agent" {
+  role       = aws_iam_role.cloudwatch_agent.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
 }
