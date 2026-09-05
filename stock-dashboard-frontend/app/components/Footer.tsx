@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="w-full py-16 px-4 md:px-16 bg-surface-container-lowest border-t border-outline-variant">
+    <footer className="w-full border-t border-outline-variant bg-white px-4 py-16 md:px-16">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
         <div className="space-y-6">
           <span className="text-2xl font-black tracking-tighter text-primary">STOCK DASHBOARD</span>

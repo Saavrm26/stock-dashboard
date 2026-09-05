@@ -18,3 +18,7 @@ model/generated/*
 
 *.log
 Dockerfile*
+
+opencode.json
+docs/superpowers
+.superpowers

@@ -31,7 +31,7 @@ export function NavBar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-16 h-20 bg-surface/80 backdrop-blur-md border-b border-outline-variant">
+    <nav className="fixed top-0 left-0 z-50 flex h-20 w-full items-center justify-between border-b border-outline-variant bg-white/90 px-4 backdrop-blur-md md:px-16">
       <div className="flex items-center gap-6 md:gap-12">
         <Link href="/" className="text-xl md:text-2xl font-black tracking-tighter text-primary">
           STOCK DASHBOARD
@@ -69,7 +69,7 @@ export function NavBar() {
               </button>
               <button
                 onClick={handleSignIn}
-                className="px-5 py-2 bg-primary text-on-primary font-semibold rounded-lg hover:bg-secondary-fixed transition-all text-sm md:text-base"
+                className="px-5 py-2 bg-primary text-on-primary font-semibold rounded-lg hover:bg-orange-700 transition-all text-sm md:text-base"
               >
                 Get Started
               </button>

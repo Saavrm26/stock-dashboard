@@ -38,7 +38,7 @@ export function Search() {
         value={searchQuery}
         onChange={handleSearch}
         placeholder="Search for a ticker..."
-        className="bg-gray-900 border border-gray-700 text-sm px-10 py-1.5 w-64 focus:outline-none focus:border-white transition-all rounded-sm text-white placeholder-gray-500"
+        className="w-64 rounded-sm border border-slate-200 bg-white px-10 py-1.5 text-sm text-slate-900 placeholder:text-slate-500 transition-all focus:border-orange-600 focus:outline-none"
       />
     </div>
   );

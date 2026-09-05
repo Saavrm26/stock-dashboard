@@ -43,3 +43,7 @@ next-env.d.ts
 # generated protobuf types
 /model/generated/**
 !/model/generated/.gitkeep
+
+opencode.json
+docs/superpowers
+.superpowers

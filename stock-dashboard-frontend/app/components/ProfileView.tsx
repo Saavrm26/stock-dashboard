@@ -13,31 +13,29 @@ export default function ProfileView({ user }: ProfileViewProps) {
   const [email, setEmail] = useState(user.email);
 
   return (
-    <div className="min-h-screen bg-background text-on-surface pt-navbar">
-      <div className="container mx-auto p-4 max-w-4xl">
-        {/* Profile Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+    <div className="min-h-screen bg-background pt-navbar text-on-surface">
+      <main className="mx-auto max-w-6xl px-6 py-12 md:px-16">
+        <header className="mb-12 flex flex-col justify-between gap-6 border-b border-outline-variant pb-8 md:flex-row md:items-end">
           <div>
-            <h1 className="text-5xl font-bold mb-2 tracking-tight">Account Profile</h1>
+            <h1 className="mb-2 text-5xl font-bold tracking-tight">Account Profile</h1>
             <p className="text-lg text-on-surface-variant max-w-lg">
               Manage your personal information, notification settings, and display preferences for your institutional trading terminal.
             </p>
           </div>
           <div className="flex gap-4">
-            <button className="border border-outline-variant px-6 py-2 rounded font-mono text-sm hover:bg-surface-container-high transition-colors">
+            <button className="border border-outline-variant bg-white px-6 py-2 font-mono text-sm text-on-surface transition-colors hover:bg-surface-container-high">
               DISCARD
             </button>
-            <button className="bg-primary text-on-primary px-6 py-2 rounded font-mono text-sm font-bold hover:opacity-90 transition-opacity">
+            <button className="bg-primary px-6 py-2 font-mono text-sm font-bold text-on-primary transition-opacity hover:opacity-90">
               SAVE CHANGES
             </button>
           </div>
-        </div>
+        </header>
 
-        {/* Tab System */}
         <div className="mb-12">
-          <div className="flex gap-10 border-b border-surface-container-highest">
+          <div className="flex gap-10 border-b border-outline-variant">
             <button
-              className={`pb-4 font-mono text-sm tracking-widest border-b-2 transition-all ${
+              className={`border-b-2 pb-4 font-mono text-sm tracking-widest transition-all ${
                 activeTab === 'basic'
                   ? 'text-primary border-primary'
                   : 'text-on-surface-variant border-transparent hover:text-primary'
@@ -47,7 +45,7 @@ export default function ProfileView({ user }: ProfileViewProps) {
               BASIC INFORMATION
             </button>
             <button
-              className={`pb-4 font-mono text-sm tracking-widest border-b-2 transition-all ${
+              className={`border-b-2 pb-4 font-mono text-sm tracking-widest transition-all ${
                 activeTab === 'preferences'
                   ? 'text-primary border-primary'
                   : 'text-on-surface-variant border-transparent hover:text-primary'
@@ -59,34 +57,31 @@ export default function ProfileView({ user }: ProfileViewProps) {
           </div>
         </div>
 
-        {/* Content Canvas */}
         {activeTab === 'basic' && (
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-            <div className="flex flex-col gap-8 md:col-span-12">
-              <div className="space-y-6">
-                <div className="flex flex-col gap-2">
-                  <label className="font-mono text-sm text-on-surface-variant uppercase">Full Name</label>
-                  <input
-                    className="bg-transparent border border-surface-container-highest px-4 py-3 font-mono text-sm focus:border-primary focus:outline-none transition-colors"
-                    type="text"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="font-mono text-sm text-on-surface-variant uppercase">Email Address</label>
-                  <input
-                    className="bg-transparent border border-surface-container-highest px-4 py-3 font-mono text-sm focus:border-primary focus:outline-none transition-colors"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="font-mono text-sm text-on-surface-variant uppercase">Account Number</label>
-                  <div className="bg-surface-container border border-surface-container-highest px-4 py-3 font-mono text-sm text-on-surface-variant cursor-not-allowed">
-                    {user.id}
-                  </div>
+          <div className="border border-outline-variant bg-white p-6 shadow-sm">
+            <div className="space-y-6">
+              <div className="flex flex-col gap-2">
+                <label className="font-mono text-sm uppercase text-on-surface-variant">Full Name</label>
+                <input
+                  className="border border-outline-variant bg-transparent px-4 py-3 font-mono text-sm transition-colors focus:border-primary focus:outline-none"
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="font-mono text-sm uppercase text-on-surface-variant">Email Address</label>
+                <input
+                  className="border border-outline-variant bg-transparent px-4 py-3 font-mono text-sm transition-colors focus:border-primary focus:outline-none"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="font-mono text-sm uppercase text-on-surface-variant">Account Number</label>
+                <div className="border border-outline-variant bg-surface-container px-4 py-3 font-mono text-sm text-on-surface-variant">
+                  {user.id}
                 </div>
               </div>
             </div>
@@ -94,27 +89,26 @@ export default function ProfileView({ user }: ProfileViewProps) {
         )}
 
         {activeTab === 'preferences' && (
-          <div className="flex flex-col gap-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Regional Settings */}
-              <div className="p-8 bg-surface-container border border-surface-container-highest rounded space-y-6">
+          <div className="border border-outline-variant bg-white p-6 shadow-sm">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="space-y-6 border border-outline-variant bg-background p-8">
                 <div className="flex items-center gap-3 mb-4">
                   <span className="material-symbols-outlined text-primary">language</span>
                   <h3 className="text-xl font-medium">Regional</h3>
                 </div>
                 <div className="flex flex-col gap-4">
                   <div className="flex flex-col gap-2">
-                    <label className="font-mono text-sm text-on-surface-variant uppercase">Default Currency</label>
-                    <select defaultValue="INR" className="bg-transparent border border-surface-container-highest px-3 py-2 font-mono text-sm focus:border-primary focus:outline-none">
-                      <option value="INR">INR - Indian Rupee</option>
-                    </select>
+                    <label className="font-mono text-sm uppercase text-on-surface-variant">Default Currency</label>
+                    <div className="border border-outline-variant bg-white px-3 py-2 font-mono text-sm text-on-surface">
+                      INR - Indian Rupee
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }
