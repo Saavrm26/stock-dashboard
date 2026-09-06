@@ -47,6 +47,19 @@ resource "aws_eks_addon" "cloudwatch_observability" {
   service_account_role_arn    = aws_iam_role.cloudwatch_agent.arn
   resolve_conflicts_on_create = "OVERWRITE"
   resolve_conflicts_on_update = "OVERWRITE"
+  configuration_values = jsonencode({
+    agent = {
+      config = {
+        logs = {
+          force_flush_interval = 5
+        }
+      }
+    }
+    containerLogs = {
+      enabled = true
+      retentionDays = var.cloudwatch_log_retention_days
+    }
+  })
 }
 
 # This is to allow ALB to send traffic to nodes and consequently to pods

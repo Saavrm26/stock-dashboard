@@ -1,7 +1,7 @@
 
 variable "env" {
   description = "The environment of the VPC"
-  type        = string
+  type = string
   default     = "dev"
 }
 
@@ -12,7 +12,7 @@ variable "name" {
 
 variable "db_name" {
   description = "Name of the RDS database"
-  type = string
+  type        = string
 }
 
 variable "node_instance_types" {
@@ -56,4 +56,10 @@ variable "custom_app_policy_arn" {
   description = "Policy of a custom policy that you want to attach"
   type = string
   default = null
+}
+
+variable "cloudwatch_log_retention_days" {
+  description = "Number of days to retain CloudWatch logs"
+  type        = number
+  default     = 30
 }

@@ -52,6 +52,7 @@ module "stock_dashboard_eks" {
   min_size             = var.min_size
   max_size             = var.max_size
   initial_desired_size = var.initial_desired_size
+  cloudwatch_log_retention_days = var.cloudwatch_log_retention_days
   vpc_id               = module.stock_dashboard_vpc.vpc_id
   private_subnets      = module.stock_dashboard_vpc.private_subnets
 }

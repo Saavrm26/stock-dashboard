@@ -28,3 +28,8 @@ variable "vpc_id" {
 variable "private_subnets" {
   type = list(string)
 }
+
+variable "cloudwatch_log_retention_days" {
+  description = "Number of days to retain CloudWatch logs"
+  type        = number
+}
