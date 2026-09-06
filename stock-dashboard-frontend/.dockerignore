@@ -22,3 +22,5 @@ Dockerfile*
 opencode.json
 docs/superpowers
 .superpowers
+.clinerules
+.next

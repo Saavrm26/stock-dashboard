@@ -34,7 +34,11 @@ export default function Home() {
             <p className="text-on-surface-variant">Search for stocks.</p>
           </div>
           <div className="border border-outline-variant bg-white p-10 shadow-sm">
-            <div className="mb-8 flex h-12 w-12 items-center justify-center border border-outline-variant bg-slate-50 text-2xl text-primary">◈</div>
+            <div className="mb-8 flex h-12 w-12 items-center justify-center border border-outline-variant bg-slate-50 text-primary">
+              <svg aria-hidden="true" className="h-6 w-6" fill="none" viewBox="0 0 24 24">
+                <path d="M4 5h16M7 12h10m-7 7h4" stroke="currentColor" strokeLinecap="round" strokeWidth="2" />
+              </svg>
+            </div>
             <h3 className="mb-4 text-xl font-medium">Stock Screening</h3>
             <p className="text-on-surface-variant">Screen your stocks based on many parameters</p>
           </div>
