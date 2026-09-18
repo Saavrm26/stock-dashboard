@@ -4,7 +4,7 @@ module "eks" {
 
   name               = var.cluster_name
   create_iam_role    = true
-  kubernetes_version = "1.34"
+  kubernetes_version = "1.35"
 
   endpoint_public_access                   = true
   enable_cluster_creator_admin_permissions = true
@@ -41,12 +41,26 @@ resource "aws_eks_addon" "ebs_csi" {
   resolve_conflicts_on_update = "OVERWRITE"
 }
 
+resource "aws_cloudwatch_log_group" "container_insights" {
+  for_each = toset([
+    "application",
+    "dataplane",
+    "host",
+    "performance",
+  ])
+
+  name              = "/aws/containerinsights/${module.eks.cluster_name}/${each.key}"
+  retention_in_days = var.cloudwatch_log_retention_days
+}
+
 resource "aws_eks_addon" "cloudwatch_observability" {
-  cluster_name                = module.eks.cluster_name
-  addon_name                  = "amazon-cloudwatch-observability"
-  service_account_role_arn    = aws_iam_role.cloudwatch_agent.arn
+  cluster_name             = module.eks.cluster_name
+  addon_name               = "amazon-cloudwatch-observability"
+  service_account_role_arn = aws_iam_role.cloudwatch_agent.arn
+
   resolve_conflicts_on_create = "OVERWRITE"
   resolve_conflicts_on_update = "OVERWRITE"
+
   configuration_values = jsonencode({
     agent = {
       config = {
@@ -57,9 +71,12 @@ resource "aws_eks_addon" "cloudwatch_observability" {
     }
     containerLogs = {
       enabled = true
-      retentionDays = var.cloudwatch_log_retention_days
     }
   })
+
+  depends_on = [
+    aws_cloudwatch_log_group.container_insights
+  ]
 }
 
 # This is to allow ALB to send traffic to nodes and consequently to pods
@@ -116,6 +133,10 @@ resource "aws_security_group" "aws_allow_traffic_from_alb" {
     protocol        = "-1"
     security_groups = [aws_security_group.aws_alb_shared_backend_sg.id]
   }
+
+  tags = {
+    "karpenter.sh/discovery" : module.eks.cluster_name
+  }
 }
 
 module "spot_eks_managed_node_group" {
@@ -128,7 +149,7 @@ module "spot_eks_managed_node_group" {
   cluster_primary_security_group_id = module.eks.cluster_primary_security_group_id
   cluster_service_cidr              = module.eks.cluster_service_cidr
   vpc_security_group_ids            = [module.eks.node_security_group_id, aws_security_group.aws_allow_traffic_from_alb.id]
-  kubernetes_version                = "1.34"
+  kubernetes_version                = "1.35"
 
   min_size        = var.min_size
   max_size        = var.max_size
@@ -142,3 +163,10 @@ module "spot_eks_managed_node_group" {
 
   depends_on = [aws_eks_addon.vpc_cni]
 }
+
+# module "karpenter" {
+#   source = "terraform-aws-modules/eks/aws//modules/karpenter"
+#   create_node_iam_role = false
+#   node_iam_role_arn = module.spot_eks_managed_node_group.iam_role_arn
+#   cluster_name = var.cluster_name
+# }
