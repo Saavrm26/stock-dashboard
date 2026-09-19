@@ -33,6 +33,13 @@ resource "aws_eks_addon" "kube_proxy" {
   resolve_conflicts_on_update = "OVERWRITE"
 }
 
+resource "aws_eks_addon" "pod_identity_agent" {
+  cluster_name                = module.eks.cluster_name
+  addon_name                  = "eks-pod-identity-agent"
+  resolve_conflicts_on_create = "OVERWRITE"
+  resolve_conflicts_on_update = "OVERWRITE"
+}
+
 resource "aws_eks_addon" "ebs_csi" {
   cluster_name                = module.eks.cluster_name
   addon_name                  = "aws-ebs-csi-driver"
@@ -161,12 +168,18 @@ module "spot_eks_managed_node_group" {
   iam_role_attach_cni_policy = false
   iam_role_name              = "eksNodeRole_spot_${var.cluster_name}"
 
+  security_group_tags = {
+    "karpenter.sh/discovery" : module.eks.cluster_name
+  }
+
   depends_on = [aws_eks_addon.vpc_cni]
 }
 
-# module "karpenter" {
-#   source = "terraform-aws-modules/eks/aws//modules/karpenter"
-#   create_node_iam_role = false
-#   node_iam_role_arn = module.spot_eks_managed_node_group.iam_role_arn
-#   cluster_name = var.cluster_name
-# }
+module "karpenter" {
+  source = "terraform-aws-modules/eks/aws//modules/karpenter"
+  create_node_iam_role = false
+  node_iam_role_arn = module.spot_eks_managed_node_group.iam_role_arn
+  cluster_name = var.cluster_name
+  create_access_entry = false
+  enable_inline_policy = true
+}

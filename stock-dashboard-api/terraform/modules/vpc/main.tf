@@ -37,8 +37,9 @@ module "vpc" {
 
   private_subnet_tags = {
     "kubernetes.io/role/internal-elb" = 1
-    Terraform   = "true"
-    Environment = var.env
+    "karpenter.sh/discovery"          = "stock-dashboard-${var.env}"
+    Terraform                         = "true"
+    Environment                       = var.env
   }
 
   database_subnet_tags = {

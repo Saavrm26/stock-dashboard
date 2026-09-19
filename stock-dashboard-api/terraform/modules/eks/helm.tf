@@ -66,4 +66,44 @@ resource "helm_release" "aws_load_balancer_controller" {
   depends_on = [module.eks, module.spot_eks_managed_node_group]
 }
 
-# todo: add cluster-autoscaler
+resource "helm_release" "karpenter" {
+  name             = "karpenter"
+  repository       = "oci://public.ecr.aws/karpenter"
+  chart            = "karpenter"
+  version          = "1.14.1"
+  namespace        = "kube-system"
+  create_namespace = true
+
+  set = [
+    {
+      name  = "settings.clusterName"
+      value = module.eks.cluster_name
+    },
+    {
+      name  = "settings.interruptionQueue"
+      value = module.eks.cluster_name
+    },
+    {
+      name  = "settings.enableZonalShift"
+      value = "false"
+    },
+    {
+      name  = "controller.resources.requests.cpu"
+      value = "1"
+    },
+    {
+      name  = "controller.resources.requests.memory"
+      value = "1Gi"
+    },
+    {
+      name  = "controller.resources.limits.cpu"
+      value = "1"
+    },
+    {
+      name  = "controller.resources.limits.memory"
+      value = "1Gi"
+    }
+  ]
+
+  depends_on = [module.eks, module.spot_eks_managed_node_group]
+}

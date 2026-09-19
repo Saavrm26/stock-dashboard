@@ -20,10 +20,15 @@ output "external_dns_role_arn" {
 
 output "eks_oidc_provider" {
   description = "EKS OIDC provider"
-  value = module.eks.oidc_provider
+  value       = module.eks.oidc_provider
 }
 
 output "eks_oidc_provider_arn" {
   description = "EKS OIDC provider ARN"
-  value = module.eks.oidc_provider_arn
+  value       = module.eks.oidc_provider_arn
+}
+
+output "karpenter_node_iam_role_name" {
+  description = "IAM role name used by Karpenter-provisioned nodes"
+  value       = module.spot_eks_managed_node_group.iam_role_name
 }

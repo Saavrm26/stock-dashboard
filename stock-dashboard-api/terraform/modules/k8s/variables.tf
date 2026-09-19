@@ -11,12 +11,12 @@ variable "aurora_db_secret_arn" {
 }
 
 variable "custom_app_policy_arn" {
-  type = string
+  type    = string
   default = null
 }
 
 variable "app_sa_name" {
-  type = string
+  type    = string
   default = "app-sa"
 }
 variable "eks_oidc_provider" {
@@ -24,4 +24,17 @@ variable "eks_oidc_provider" {
 }
 variable "eks_oidc_provider_arn" {
   type = string
+}
+
+variable "cluster_name" {
+  type = string
+}
+
+variable "karpenter_node_role" {
+  type = string
+}
+
+variable "karpenter_ami_version" {
+  type    = string
+  default = "v20260917"
 }

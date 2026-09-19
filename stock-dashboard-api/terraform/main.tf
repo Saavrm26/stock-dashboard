@@ -30,6 +30,7 @@ module "stock_dashboard_vpc" {
 
   vpc_name = "${var.name}_${var.env}"
   env      = var.env
+
 }
 
 # DB can be created in parallel to EKS, since it's use is only in k8s
@@ -47,25 +48,27 @@ module "stock_dashboard_db" {
 module "stock_dashboard_eks" {
   source = "./modules/eks"
 
-  cluster_name         = "${var.name}-${var.env}"
-  node_instance_types  = var.node_instance_types
-  min_size             = var.min_size
-  max_size             = var.max_size
-  initial_desired_size = var.initial_desired_size
+  cluster_name                  = "${var.name}-${var.env}"
+  node_instance_types           = var.node_instance_types
+  min_size                      = var.min_size
+  max_size                      = var.max_size
+  initial_desired_size          = var.initial_desired_size
   cloudwatch_log_retention_days = var.cloudwatch_log_retention_days
-  vpc_id               = module.stock_dashboard_vpc.vpc_id
-  private_subnets      = module.stock_dashboard_vpc.private_subnets
+  vpc_id                        = module.stock_dashboard_vpc.vpc_id
+  private_subnets               = module.stock_dashboard_vpc.private_subnets
 }
 
 module "stock_dashboard_k8s" {
-  source                = "./modules/k8s"
-  count                 = var.create_k8s ? 1 : 0
-  db_url                = "${module.stock_dashboard_db[0].cluster_url}:${module.stock_dashboard_db[0].aurora_db_port}/${module.stock_dashboard_db[0].database_name}"
-  db_user               = module.stock_dashboard_db[0].database_user
+  source               = "./modules/k8s"
+  count                = var.create_k8s ? 1 : 0
+  db_url               = "${module.stock_dashboard_db[0].cluster_url}:${module.stock_dashboard_db[0].aurora_db_port}/${module.stock_dashboard_db[0].database_name}"
+  db_user              = module.stock_dashboard_db[0].database_user
   aurora_db_secret_arn = module.stock_dashboard_db[0].aurora_db_secret_arn
   # just to be safe, theoretically it is not required as the k8s provider depends on eks init
   eks_oidc_provider     = module.stock_dashboard_eks.eks_oidc_provider
   eks_oidc_provider_arn = module.stock_dashboard_eks.eks_oidc_provider_arn
   custom_app_policy_arn = var.custom_app_policy_arn
-  depends_on = [module.stock_dashboard_eks, module.stock_dashboard_db]
+  cluster_name          = module.stock_dashboard_eks.cluster_name
+  karpenter_node_role   = module.stock_dashboard_eks.karpenter_node_iam_role_name
+  depends_on            = [module.stock_dashboard_eks, module.stock_dashboard_db]
 }
