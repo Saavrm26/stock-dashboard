@@ -11,6 +11,12 @@ module "eks" {
 
   vpc_id     = var.vpc_id
   subnet_ids = var.private_subnets
+  node_security_group_tags = {
+    "karpenter.sh/discovery" : var.cluster_name
+  }
+  security_group_tags = {
+    "karpenter.sh/discovery" : var.cluster_name
+  }
 }
 
 resource "aws_eks_addon" "vpc_cni" {
@@ -67,20 +73,6 @@ resource "aws_eks_addon" "cloudwatch_observability" {
 
   resolve_conflicts_on_create = "OVERWRITE"
   resolve_conflicts_on_update = "OVERWRITE"
-
-  configuration_values = jsonencode({
-    agent = {
-      config = {
-        logs = {
-          force_flush_interval = 5
-        }
-      }
-    }
-    containerLogs = {
-      enabled = true
-    }
-  })
-
   depends_on = [
     aws_cloudwatch_log_group.container_insights
   ]
@@ -175,6 +167,7 @@ module "spot_eks_managed_node_group" {
   depends_on = [aws_eks_addon.vpc_cni]
 }
 
+# just creates roles, pod identities, sqs, etc
 module "karpenter" {
   source = "terraform-aws-modules/eks/aws//modules/karpenter"
   create_node_iam_role = false

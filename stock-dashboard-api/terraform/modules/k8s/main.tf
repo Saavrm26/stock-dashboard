@@ -1,3 +1,17 @@
+terraform {
+  required_providers {
+    helm = {
+      source  = "hashicorp/helm"
+      version = ">= 2.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.0"
+    }
+  }
+  required_version = ">= 1.2"
+}
+
 data "aws_secretsmanager_secret" "aurora_db_secret" {
   arn = var.aurora_db_secret_arn
 }
@@ -24,21 +38,4 @@ resource "kubernetes_service_account_v1" "app_sa" {
       "eks.amazonaws.com/role-arn": aws_iam_role.app_role.arn
     }
   }
-}
-
-resource "kubernetes_storage_class_v1" "gp3" {
-  metadata {
-    name = "gp3"
-  }
-
-  storage_provisioner = "ebs.csi.aws.com"
-
-  parameters = {
-    type    = "gp3"
-    fsType  = "ext4"
-  }
-
-  reclaim_policy         = "Delete"
-  volume_binding_mode    = "WaitForFirstConsumer"
-  allow_volume_expansion = true
 }

@@ -58,6 +58,20 @@ module "stock_dashboard_eks" {
   private_subnets               = module.stock_dashboard_vpc.private_subnets
 }
 
+module "stock_dashboard_eks_addon" {
+  source = "./modules/eks_addons"
+
+  cluster_name          = module.stock_dashboard_eks.cluster_name
+  external_dns_role_arn = module.stock_dashboard_eks.external_dns_role_arn
+
+  providers = {
+    helm       = helm
+    kubernetes = kubernetes
+  }
+
+  depends_on = [module.stock_dashboard_eks, module.stock_dashboard_db]
+}
+
 module "stock_dashboard_k8s" {
   source               = "./modules/k8s"
   count                = var.create_k8s ? 1 : 0
@@ -70,5 +84,10 @@ module "stock_dashboard_k8s" {
   custom_app_policy_arn = var.custom_app_policy_arn
   cluster_name          = module.stock_dashboard_eks.cluster_name
   karpenter_node_role   = module.stock_dashboard_eks.karpenter_node_iam_role_name
-  depends_on            = [module.stock_dashboard_eks, module.stock_dashboard_db]
+
+  providers = {
+    helm       = helm
+    kubernetes = kubernetes
+  }
+  depends_on = [module.stock_dashboard_eks, module.stock_dashboard_db, module.stock_dashboard_eks_addon]
 }
